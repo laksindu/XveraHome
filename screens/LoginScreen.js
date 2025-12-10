@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { auth } from '../firebase';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
 
 
@@ -13,13 +13,13 @@ const LoginScreen= ()=>{
     const signnavi = useNavigation();
 
     useEffect(()=>{
-        const unsubscribe = auth.onAuthStateChanged(user=>{
+        const unsubscribe = onAuthStateChanged(auth, (user)=>{
             if(user){
                 navigation.replace("Home")
             }
         })
         return unsubscribe;
-    })
+    }, [navigation])
 
     const handleSignup = ()=>{
         createUserWithEmailAndPassword(auth, Email, Password)

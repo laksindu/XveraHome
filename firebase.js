@@ -1,6 +1,7 @@
-// Firebase modular SDK (v9+) initialization
+// Firebase modular SDK (v9+) initialization with React Native persistence
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -20,7 +21,9 @@ if (!getApps().length) {
   app = getApp();
 }
 
-// Create and export the Auth instance using the modular API
-const auth = getAuth(app);
+// Create and export the Auth instance with AsyncStorage persistence
+const auth = initializeAuth(app, {
+  persistence: getReactNativePersistence(ReactNativeAsyncStorage)
+});
 
 export { auth, app };
