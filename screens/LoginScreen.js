@@ -10,11 +10,12 @@ const LoginScreen= ()=>{
     const [Password,setPassword]= useState('');
 
     const navigation = useNavigation();
+    const signnavi = useNavigation();
 
     useEffect(()=>{
         const unsubscribe = auth.onAuthStateChanged(user=>{
             if(user){
-                navigation.navigate("Home")
+                navigation.replace("Home")
             }
         })
         return unsubscribe;
@@ -28,6 +29,11 @@ const LoginScreen= ()=>{
         })
         .catch(error=>alert(error.message));
     }
+
+    const navigateToSignUp = ()=>{
+        signnavi.navigate("SignUpScreen");
+    }
+
     const handleLogin = ()=>{
         if(!Email || !Password){
             alert("Please enter all the details");
@@ -65,9 +71,10 @@ const LoginScreen= ()=>{
         <Text style={styles.btnstyle}>Login</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style = {styles.button}
-        onPress ={handleSignup}>
-        <Text style={styles.btnstyle}>Sign Up</Text>
+        <TouchableOpacity 
+        style = {styles.signupbtn}
+        onPress ={navigateToSignUp}>
+        <Text style={styles.signuptxt}>Sign Up</Text>
         </TouchableOpacity>
 
     </View>
@@ -78,8 +85,8 @@ const LoginScreen= ()=>{
 const styles = StyleSheet.create({
         container :{
         flex : 1,
-        //justifyContent : 'center',
-        marginTop :380,
+
+        marginTop :'380',
         alignItems : 'center'
     },
     input:{
@@ -99,7 +106,7 @@ const styles = StyleSheet.create({
         textAlign : 'center',
         textDecorationColor : '#fff',
         borderRadius : 20,
-        width : '70%',
+        width : '60%',
         alignItems : 'center',
         justifyContent : 'center',
         fontFamily : 'fantasy',
@@ -123,6 +130,26 @@ const styles = StyleSheet.create({
         fontSize : 17,
         fontWeight : 'bold'
     },
+    signupbtn:{
+        backgroundColor : '#f8f5f5ff',
+        padding : 10,
+        marginTop : 15,
+        textAlign : 'center',
+        textDecorationColor : '#fff',
+        borderRadius : 20,
+        width : '60%',
+        alignItems : 'center',
+        justifyContent : 'center',
+        fontFamily : 'fantasy',
+        fontSize : 20,
+        borderWidth : 2,
+        borderColor : '#2383c4ff',
+    },
+    signuptxt:{
+        color : '#2383c4ff',
+        fontSize : 17,
+        fontWeight : 'bold'
+    }
 
 })
 export default LoginScreen;

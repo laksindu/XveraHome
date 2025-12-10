@@ -14,7 +14,7 @@ const HomeScreen = ()=> {
     useEffect(()=>{
         const unsubscribe = auth.onAuthStateChanged(user=>{
             if(!user){
-                navigation.navigate("LoginScreen")
+                navigation.replace("LoginScreen")
             }
         })
         return unsubscribe;
@@ -40,6 +40,8 @@ const HomeScreen = ()=> {
         >
         <Text style={styles.Text}>Logout</Text>
         </TouchableOpacity>
+
+        <Text style={styles.uid}>User ID : {auth.currentUser?.uid}</Text>
     </View>
   )
 }
@@ -59,6 +61,12 @@ const styles = StyleSheet.create({
     Text:{
         color : '#fff',
         fontSize : 13,
+        fontWeight : 'bold',
+    },
+    uid:{
+        marginTop : 200,
+        marginLeft : 20,
+        fontSize : 16,
         fontWeight : 'bold',
     }
 })

@@ -4,14 +4,22 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
+import SignUpScreen from './screens/SignUpScreen';
+import main from './screens/main';
+import { auth } from './firebase';
+import { useNavigation } from '@react-navigation/native';
 
-const Stack = createNativeStackNavigator();
 
-export default function App() {
+
+const App= ()=> {
+
+  const Stack = createNativeStackNavigator();
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen options={{headerShown : false}} name="LoginScreen"  component={LoginScreen} />
+        <Stack.Screen options ={{headerShown : false}} name="SignUpScreen" component={SignUpScreen} />
         <Stack.Screen options ={{headerShown : false}} name="Home" component={HomeScreen} />
       </Stack.Navigator>
     </NavigationContainer>
@@ -26,3 +34,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+export default App;
