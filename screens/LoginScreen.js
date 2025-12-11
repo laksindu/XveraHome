@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, KeyboardAvoidingView, ScrollView ,ImageBackground, Dimensions } from 'react-native';
 import { auth } from '../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
 
+const ScreenHeight = Dimensions.get("window").height
 
 const LoginScreen= ()=>{
     const [Email,setEmail]=useState('');
@@ -21,17 +22,8 @@ const LoginScreen= ()=>{
         return unsubscribe;
     }, [navigation])
 
-    const handleSignup = ()=>{
-        createUserWithEmailAndPassword(auth, Email, Password)
-        .then((userCredentials)=>{
-            const user = userCredentials.user;
-            console.log('Registered with:', user.email);
-        })
-        .catch(error=>alert(error.message));
-    }
-
     const navigateToSignUp = ()=>{
-        signnavi.navigate("SignUpScreen");
+        signnavi.replace("Main");
     }
 
     const handleLogin = ()=>{
@@ -48,7 +40,15 @@ const LoginScreen= ()=>{
     }
 
   return (
-    <KeyboardAvoidingView style={styles.keyborad} behavior="padding">
+    <ImageBackground
+    source={require('../assets/log2.png')} style={styles.backgroundImage} resizeMode="cover">
+    <KeyboardAvoidingView 
+      style={styles.keyborad} 
+      behavior="padding"
+      enabled={true}
+      keyboardVerticalOffset={10}
+    >
+    <ScrollView contentContainerStyle={styles.scrollContent} scrollEnabled={false}>
     <View style={styles.container}>
         <TextInput
             placeholder='Email'
@@ -78,21 +78,30 @@ const LoginScreen= ()=>{
         </TouchableOpacity>
 
     </View>
+    </ScrollView>
     </KeyboardAvoidingView>
+    </ImageBackground>
   )
 }
 
 const styles = StyleSheet.create({
-        container :{
-        flex : 1,
 
-        marginTop :'380',
-        alignItems : 'center'
+    backgroundImage: {
+        flex: 1,
+        width: '100%',
+        height: '90%',
+    },
+
+    container :{
+        flex : 1,
+        marginTop : ScreenHeight * 0.5,
+        alignItems : 'center',
+        backgroundColor:'#f4f4f4'
     },
     input:{
         height : 40,
         borderWidth : 1,
-        borderColor : '#000',
+        borderColor : '#ccc',
         width : '80%',
         paddingHorizontal : 10,
         marginVertical : 10,
@@ -100,7 +109,7 @@ const styles = StyleSheet.create({
         fontSize : 13,
     },
     button:{
-        backgroundColor : '#2383c4ff',
+        backgroundColor : '#7a84e9',
         padding : 10,
         marginTop : 15,
         textAlign : 'center',
@@ -120,10 +129,12 @@ const styles = StyleSheet.create({
     },
     keyborad:{
         flex : 1,
-        behavior : 'padding',
         justifyContent : 'center',
         alignContent : 'center'
-
+    },
+    scrollContent:{
+        flexGrow : 1,
+        justifyContent : 'center'
     },
     btnstyle:{
         color : '#fff',
@@ -143,10 +154,10 @@ const styles = StyleSheet.create({
         fontFamily : 'fantasy',
         fontSize : 20,
         borderWidth : 2,
-        borderColor : '#2383c4ff',
+        borderColor : '#7a84e9',
     },
     signuptxt:{
-        color : '#2383c4ff',
+        color : '#7a84e9',
         fontSize : 17,
         fontWeight : 'bold'
     }

@@ -36,6 +36,7 @@ const App= ()=> {
     <NavigationContainer>
       <Stack.Navigator initialRouteName={initialRouteName}>
         <Stack.Screen options={{headerShown : false}} name="LoginScreen"  component={LoginScreen} />
+        <Stack.Screen options={{headerShown: false}} name="Main" component={main}/>
         <Stack.Screen options ={{headerShown : false}} name="SignUpScreen" component={SignUpScreen} />
         <Stack.Screen options ={{headerShown : false}} name="Home" component={HomeScreen} />
       </Stack.Navigator>

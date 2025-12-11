@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import { Dimensions,StyleSheet, Text, View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView , ImageBackground} from 'react-native';
 import { auth } from '../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
 
+const { width } = Dimensions.get('window');
+const baseSize = width / 100;
 
 const SignUpScreen = () => {
 
@@ -11,12 +13,19 @@ const SignUpScreen = () => {
       const [Password,setPassword]= useState('');
 
       const handleSignup = ()=>{
+
+        if(!Email || !Password){
+          alert("Fill the all field")
+          return
+        }else{
+
               createUserWithEmailAndPassword(auth, Email, Password)
               .then((userCredentials)=>{
                   const user = userCredentials.user;
                   console.log('Registered with:', user.email);
               })
               .catch(error=>alert(error.message));
+            }
       }
 
       const backnavigate = useNavigation()
@@ -26,6 +35,14 @@ const SignUpScreen = () => {
 }
 
   return (
+    <ImageBackground source={require('../assets/signup.png')} style ={styles.backgroundimage} resizeMode='cover'>
+    <KeyboardAvoidingView 
+      style={styles.keyborad} 
+      behavior="padding"
+      enabled={true}
+      keyboardVerticalOffset={10}
+    >
+    <ScrollView contentContainerStyle={styles.scrollContent} scrollEnabled={false}>
     <View style={styles.container}>
       <TextInput
        placeholder='Enter your Email'
@@ -52,53 +69,77 @@ const SignUpScreen = () => {
       <Text style={styles.backText}>Back</Text>
       </TouchableOpacity>
     </View>
+    </ScrollView>
+    </KeyboardAvoidingView>
+    </ImageBackground>
   )
 }
+const ScreenWidth = Dimensions.get('window').width;
+const ScreenHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
+
+  backgroundimage:{
+    flex:1,
+    width:"100%",
+    height:"100%"
+  },
+
+  keyborad:{
+    flex : 1,
+    justifyContent : 'center',
+    alignContent : 'center'
+  },
+  scrollContent:{
+    flexGrow : 1,
+    justifyContent : 'center'
+  },
   container:{
     flex : 1,
     alignItems : 'center',
-    marginTop : 380,
+    marginTop : ScreenHeight * 0.5,
   },
   input:{
-    width : 300,
-    height : 50,
-    borderColor : '#ccc',
+    height : 40,
     borderWidth : 1,
-    padding : 10,
+    borderColor : '#ccc',
+    width : '80%',
+    paddingHorizontal : 10,
     marginVertical : 10,
-    borderRadius : 18,
+    borderRadius: 18,
     fontSize : 13,
   },
   button:{
-    backgroundColor : '#2383c4ff',
-    width : 100,
-    padding : 10,
+    backgroundColor : '#7a84e9',
+    width : '100%',
+    width : '60%',
+    padding : 15,
     borderRadius : 100,
     alignItems : 'center',
     marginTop : 20,
-    width : '60%',
+    elevation:5
+
   },
   Text:{
     color : '#fff',
-    fontSize : 13,
+    fontSize : 17,
     fontWeight : 'bold',
   },
   backbtn:{
     borderWidth : 1,
-    borderColor : '#2383c4ff',
+    borderColor : '#7a84e9',
     backgroundColor : '#f3f4f5ff',
     width : 100,
-    padding : 10,
+    width : '60%',
+    padding : 15,
     borderRadius : 100,
     alignItems : 'center',
     marginTop : 20,
-    width : '60%',
+
   },
   backText:{
-    color : '#2383c4ff',
-    fontSize : 13,
+    color : '#7a84e9',
+    fontSize : 17,
     fontWeight : 'bold',
   }
 
