@@ -6,20 +6,20 @@ import { useNavigation } from '@react-navigation/native';
 
 const ScreenWidth = Dimensions.get("window").width
 
-const main = () => {
+const Homemain = () => {
     const navigation = useNavigation();
 
     const navigaetlogin =()=>{
-      navigation.navigate("main1");
+      navigation.navigate("SignUpScreen");
     }
   return (
     <View style={styles.container}>
-      <ImageBackground source={require('../assets/main1.png')} style={styles.backgroundImage}>
+      <ImageBackground source={require('../assets/Homemain.png')} style={styles.backgroundImage}>
       </ImageBackground>
       <TouchableOpacity
       onPress={navigaetlogin}
       style ={styles.button}>
-      <Text style ={styles.btntext}>Next</Text>   
+      <Text style ={styles.btntext}>Get started</Text>   
       </TouchableOpacity>
     </View>
   )
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
 
     button:{
         backgroundColor : '#2196f3',
-        width : ScreenWidth* 0.5,
+        width : ScreenWidth *0.5,
         padding : 10,
         borderRadius : 100,
         alignItems : 'center',
@@ -61,4 +61,4 @@ const styles = StyleSheet.create({
 
 })
 
-export default main;
+export default Homemain;

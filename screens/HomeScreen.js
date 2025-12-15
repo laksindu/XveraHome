@@ -16,29 +16,6 @@ const HomeScreen = ()=> {
 
     const userid = auth.currentUser?.uid;
 
-    const navigation = useNavigation();
-
-    useEffect(()=>{
-        const unsubscribe = auth.onAuthStateChanged(user=>{
-            if(!user){
-                navigation.replace("LoginScreen")
-            }
-        })
-        return unsubscribe;
-    })
-
-    const handleSignOut = ()=>{
-        signOut(auth)
-        .then(()=>{
-            //alert("Need to Signout again");
-            console.log('User signed out');
-
-        })
-        .catch(error=>{
-            alert(error.message);
-        });
-    }
-
     const show=()=>{
         const uid = auth.currentUser?.uid
         alert("Hello")
@@ -46,12 +23,6 @@ const HomeScreen = ()=> {
 
   return (
     <View style={styles.container}>
-        <TouchableOpacity
-        onPress={handleSignOut}
-        style ={styles.button}
-        >
-        <Text style={styles.Text}>Logout</Text>
-        </TouchableOpacity>
 
         <View style = {styles.R1btn}>
             <TouchableOpacity
@@ -81,6 +52,12 @@ const HomeScreen = ()=> {
                 <Text style={styles.R4_text}>Light 2</Text>
             </TouchableOpacity>
         </View>
+        <View style = {styles.R5btn}>
+            <TouchableOpacity
+            >
+            <Text style={styles.R5_text}>Light 2</Text>
+            </TouchableOpacity>
+        </View>       
     </View>
   )
 }
@@ -94,7 +71,7 @@ const styles = StyleSheet.create({
         paddingTop: height * 0.02,
     },
     button:{
-        backgroundColor : '#7a84e9',
+        backgroundColor : '#2196f3',
         width : 100,
         padding : 10,
         borderRadius : 100,
@@ -111,7 +88,7 @@ const styles = StyleSheet.create({
         marginTop: baseSize * 20,
         borderRadius: 30,
         shadowOpacity: 0.3,
-        shadowColor: "#7a84e9",
+        shadowColor: "#2196f3",
         shadowRadius: 8,
         elevation: 10,
     },
@@ -124,10 +101,10 @@ const styles = StyleSheet.create({
         shadowRadius:30,
         marginTop:baseSize * 5,
         elevation:10,
-        shadowColor:"#7a84e9",
+        shadowColor:"#2196f3",
     },
     R1_text:{
-        color :'#7a84e9',
+        color :'#2196f3',
         alignSelf:'center',
         //marginTop:'100',
         marginTop:ScreenHeight*0.12,
@@ -135,7 +112,7 @@ const styles = StyleSheet.create({
 
     },
     R2_text:{
-        color :'#7a84e9',
+        color :'#2196f3',
         alignSelf:'center',
         //marginTop:'100',
         marginTop:ScreenHeight*0.12,
@@ -151,10 +128,10 @@ const styles = StyleSheet.create({
         shadowRadius:30,
         marginTop:baseSize * 5,
         elevation:10,
-        shadowColor:"#7a84e9",
+        shadowColor:"#2196f3",
     },
     R3_text:{
-        color :'#7a84e9',
+        color :'#2196f3',
         alignSelf:'center',
         //marginTop:'100',
         marginTop:ScreenHeight*0.12,
@@ -169,10 +146,10 @@ const styles = StyleSheet.create({
         shadowRadius:30,
         marginTop:baseSize * 5,
         elevation:10,
-        shadowColor:"#7a84e9",
+        shadowColor:"#2196f3",
     },
     R4_text:{
-        color :'#7a84e9',
+        color :'#2196f3',
         alignSelf:'center',
         //marginTop:'100',
         marginTop:ScreenHeight*0.12,
@@ -183,12 +160,19 @@ const styles = StyleSheet.create({
         fontSize : 13,
         fontWeight : 'bold',
     },
-    uid:{
-        marginTop : 200,
-        marginLeft : 20,
-        fontSize : 16,
-        fontWeight : 'bold',
+    R5btn:{
+        backgroundColor:'#ffffffff',
+        width: width * 0.9,
+        alignSelf:'center',
+        height:ScreenHeight*0.3,
+        borderRadius:30,
+        shadowRadius:30,
+        marginTop:baseSize * 5,
+        elevation:10,
+        shadowColor:"#2196f3",
+        alignItems:'center'       
     }
+
 })
 
 export default HomeScreen;

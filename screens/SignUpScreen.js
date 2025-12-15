@@ -35,7 +35,7 @@ const SignUpScreen = () => {
 }
 
   return (
-    <ImageBackground source={require('../assets/signup.png')} style ={styles.backgroundimage} resizeMode='cover'>
+    <ImageBackground source={require('../assets/regi.png')} style ={styles.backgroundimage} resizeMode='cover'>
     <KeyboardAvoidingView 
       style={styles.keyborad} 
       behavior="padding"
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     fontSize : 13,
   },
   button:{
-    backgroundColor : '#7a84e9',
+    backgroundColor : '#3e77f4',
     width : '100%',
     width : '60%',
     padding : 15,
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
   },
   backbtn:{
     borderWidth : 1,
-    borderColor : '#7a84e9',
+    borderColor : '#3e77f4',
     backgroundColor : '#f3f4f5ff',
     width : 100,
     width : '60%',
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
 
   },
   backText:{
-    color : '#7a84e9',
+    color : '#3e77f4',
     fontSize : 17,
     fontWeight : 'bold',
   }
