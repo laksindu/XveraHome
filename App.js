@@ -4,12 +4,13 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
 import LoginScreen from './screens/LoginScreen';
-import HomeScreen from './screens/HomeScreen';
 import SignUpScreen from './screens/SignUpScreen';
 import main from './screens/main';
 import { auth } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-
+import main1 from './screens/main1';
+import Homemain from './screens/Homemain';
+import MainContainer from './screens/MainContainer';
 
 const App= ()=> {
   const [initializing, setInitializing] = useState(true);
@@ -37,8 +38,10 @@ const App= ()=> {
       <Stack.Navigator initialRouteName={initialRouteName}>
         <Stack.Screen options={{headerShown : false}} name="LoginScreen"  component={LoginScreen} />
         <Stack.Screen options={{headerShown: false}} name="Main" component={main}/>
+        <Stack.Screen options={{headerShown: false}} name='main1' component={main1}/>
+        <Stack.Screen options={{headerShown : false}} name='Homemain' component={Homemain}/>
         <Stack.Screen options ={{headerShown : false}} name="SignUpScreen" component={SignUpScreen} />
-        <Stack.Screen options ={{headerShown : false}} name="Home" component={HomeScreen} />
+        <Stack.Screen options ={{headerShown : false}} name="Home" component={MainContainer} />
       </Stack.Navigator>
     </NavigationContainer>
   );
