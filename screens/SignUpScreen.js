@@ -9,6 +9,7 @@ const baseSize = width / 100;
 
 const SignUpScreen = () => {
 
+  const navigation = useNavigation()
       const [Email,setEmail]=useState('');
       const [Password,setPassword]= useState('');
 
@@ -23,6 +24,7 @@ const SignUpScreen = () => {
               .then((userCredentials)=>{
                   const user = userCredentials.user;
                   console.log('Registered with:', user.email);
+                  navigation.replace('Home')
               })
               .catch(error=>alert(error.message));
             }

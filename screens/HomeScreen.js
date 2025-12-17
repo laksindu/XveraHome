@@ -1,16 +1,16 @@
-import { StyleSheet, Text, View,TextInput, TouchableOpacity , Dimensions} from 'react-native';
+import { StyleSheet, Text, View,TextInput, TouchableOpacity , Dimensions, Alert} from 'react-native';
 import React, { use, useEffect } from 'react';
 import { auth } from '../firebase';
 import { signOut } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Avatar } from 'react-native-paper';
 //import { TextInput } from 'react-native/types_generated/index';
 
 const { width, height } = Dimensions.get('window')
 
 const baseSize = Math.min(width, height) / 100;
-
-
 
 const HomeScreen = ()=> {
 
@@ -27,31 +27,17 @@ const HomeScreen = ()=> {
         return unsubscribe;
     })
 
-    const handleSignOut = ()=>{
-        signOut(auth)
-        .then(()=>{
-            //alert("Need to Signout again");
-            console.log('User signed out');
-
-        })
-        .catch(error=>{
-            alert(error.message);
-        });
-    }
-
     const show=()=>{
         const uid = auth.currentUser?.uid
-        alert("Hello")
     }
 
   return (
-    <View style={styles.container}>
-        <TouchableOpacity
-        onPress={handleSignOut}
-        style ={styles.button}
-        >
-        <Text style={styles.Text}>Logout</Text>
-        </TouchableOpacity>
+    <SafeAreaView style={styles.container}>
+        <View style={styles.userdp}>
+            <Avatar.Image
+            source={require('../assets/robot.png')}
+            size={50}/>
+        </View>
 
         <View style = {styles.R1btn}>
             <TouchableOpacity
@@ -81,7 +67,7 @@ const HomeScreen = ()=> {
                 <Text style={styles.R4_text}>Light 2</Text>
             </TouchableOpacity>
         </View>
-    </View>
+    </SafeAreaView>
   )
 }
 const ScreenWidth = Dimensions.get('window').width
@@ -188,7 +174,10 @@ const styles = StyleSheet.create({
         marginLeft : 20,
         fontSize : 16,
         fontWeight : 'bold',
-    }
+    },
+    userdp:{
+        marginLeft:ScreenWidth*0.8
+    },
 })
 
 export default HomeScreen;
