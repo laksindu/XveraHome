@@ -70,6 +70,10 @@ const SignUpScreen = () => {
       style ={styles.backbtn}>
       <Text style={styles.backText}>Back</Text>
       </TouchableOpacity>
+        <View style={styles.footer}>
+            <Text style={styles.footertxt}>Xvera v1.0 - 2025</Text>
+        </View>
+
     </View>
     </ScrollView>
     </KeyboardAvoidingView>
@@ -112,7 +116,7 @@ const styles = StyleSheet.create({
     fontSize : 13,
   },
   button:{
-    backgroundColor : '#7a84e9',
+    backgroundColor : '#2196f3',
     width : '100%',
     width : '60%',
     padding : 15,
@@ -129,7 +133,7 @@ const styles = StyleSheet.create({
   },
   backbtn:{
     borderWidth : 1,
-    borderColor : '#7a84e9',
+    borderColor : '#2196f3',
     backgroundColor : '#f3f4f5ff',
     width : 100,
     width : '60%',
@@ -140,9 +144,15 @@ const styles = StyleSheet.create({
 
   },
   backText:{
-    color : '#7a84e9',
+    color : '#2196f3',
     fontSize : 17,
     fontWeight : 'bold',
+  },
+  footer:{
+    marginTop:ScreenHeight*0.1,
+  },
+  footertxt:{
+    color:'#8d8c8cff',
   }
 
 })

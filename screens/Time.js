@@ -18,7 +18,6 @@ let Status;
 const Time = () => {
 
 const [date,setDate]= useState(new Date())
-
 const [text , setText] = useState('Empty')
 
 const [chooseData , setchooseData] = useState('')
@@ -109,7 +108,7 @@ const showDatePicker = ()=>{
       <View style={styles.dp}>
         <Text style={styles.headertxt}>Set Schedule</Text>
         <Avatar.Image
-        source={require('../assets/robot.png')}
+        source={require('../assets/user.png')}
         size={50}
         />
       </View>

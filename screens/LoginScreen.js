@@ -41,7 +41,7 @@ const LoginScreen= ()=>{
 
   return (
     <ImageBackground
-    source={require('../assets/log2.png')} style={styles.backgroundImage} resizeMode="cover">
+    source={require('../assets/log1.png')} style={styles.backgroundImage} resizeMode="cover">
     <KeyboardAvoidingView 
       style={styles.keyborad} 
       behavior="padding"
@@ -76,6 +76,9 @@ const LoginScreen= ()=>{
         onPress ={navigateToSignUp}>
         <Text style={styles.signuptxt}>Sign Up</Text>
         </TouchableOpacity>
+        <View style={styles.footer}>
+            <Text style={styles.footertxt}>Xvera v1.0 - 2025</Text>
+        </View>
 
     </View>
     </ScrollView>
@@ -109,7 +112,7 @@ const styles = StyleSheet.create({
         fontSize : 13,
     },
     button:{
-        backgroundColor : '#7a84e9',
+        backgroundColor : '#2196f3',
         padding : 10,
         marginTop : 15,
         textAlign : 'center',
@@ -154,12 +157,18 @@ const styles = StyleSheet.create({
         fontFamily : 'fantasy',
         fontSize : 20,
         borderWidth : 2,
-        borderColor : '#7a84e9',
+        borderColor : '#2196f3',
     },
     signuptxt:{
-        color : '#7a84e9',
+        color : '#2196f3',
         fontSize : 17,
         fontWeight : 'bold'
+    },
+    footer:{
+        marginTop:ScreenHeight*0.1,
+    },
+    footertxt:{
+        color:'#8d8c8cff',
     }
 
 })
