@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     fontSize : 13,
   },
   button:{
-    backgroundColor : '#2196f3',
+    backgroundColor : '#133665',
     width : '100%',
     width : '60%',
     padding : 15,
@@ -132,8 +132,8 @@ const styles = StyleSheet.create({
     fontWeight : 'bold',
   },
   backbtn:{
-    borderWidth : 1,
-    borderColor : '#2196f3',
+    borderWidth : 2,
+    borderColor : '#133665',
     backgroundColor : '#f3f4f5ff',
     width : 100,
     width : '60%',
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
 
   },
   backText:{
-    color : '#2196f3',
+    color : '#133665',
     fontSize : 17,
     fontWeight : 'bold',
   },

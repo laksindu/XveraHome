@@ -39,6 +39,14 @@ const MainContainer = () => {
                     return <Ionicons name={IconName} size={size} color={color} />
 
                 },
+                tabBarStyle:{
+                    backgroundColor:'#0B0F14',
+                    borderTopWidth:0,
+                    elevation:0,
+
+                },
+                tabBarActiveTintColor:'#aac7ff',
+                tabBarInactiveTintColor:'gray',
         })}>
             <Tab.Screen options={{headerShown : false}} name={homename} component={HomeScreen} />
             <Tab.Screen options={{headerShown : false}} name={SensorName} component={Sensorpage} />
@@ -51,4 +59,8 @@ const MainContainer = () => {
 
 export default MainContainer
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    tab:{
+        backgroundColor:'#032b5b'
+    }
+})

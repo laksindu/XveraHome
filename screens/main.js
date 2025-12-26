@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     },
 
     button:{
-        backgroundColor : '#2196f3',
+        backgroundColor : '#133665',
         width : 100,
         padding : 10,
         borderRadius : 100,
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
       marginTop:ScreenHeight*0.05,
       fontSize:25,
       fontWeight:'bold',
-      color:'#2196f3'
+      color:'#133665'
     },
     text2:{
       alignSelf:'center',
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
       justifyContent:'space-between'
     },
     skip1:{
-      backgroundColor:'#2196f3',
+      backgroundColor:'#133665',
       width:10,
       height:10,
       borderRadius:10
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
       height:10,
       borderRadius:10,
       borderWidth:1.5,
-      borderColor:'#2196f3',
+      borderColor:'#133665',
       marginLeft:ScreenWidth*0.01,    
     }
 

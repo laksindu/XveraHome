@@ -28,7 +28,7 @@ const Settings = () => {
           <Avatar.Image 
             source={require( '../assets/id.png')}
             size={100}
-            backgroundColor = 'white'
+            backgroundColor = '#133665'
           />
           <View style={{marginLeft: 20}}>
             <Title style={[styles.title, {
@@ -45,7 +45,7 @@ const Settings = () => {
             <Avatar.Image
             source={require('../assets/setup.png')}
             size={45}
-            backgroundColor = "white"
+            backgroundColor = "#000b20"
             />
             <Text style={styles.testbtntxt}>How to setup</Text>
         </TouchableOpacity>
@@ -53,7 +53,7 @@ const Settings = () => {
             <Avatar.Image
             source={require('../assets/info.png')}
             size={45}
-            backgroundColor = "white"
+            backgroundColor = "#000b20"
             />
             <Text style={styles.testbtntxt}>About us</Text>
         </TouchableOpacity>
@@ -61,7 +61,7 @@ const Settings = () => {
             <Avatar.Image
             source={require('../assets/contact.png')}
             size={45}
-            backgroundColor = 'white'
+            backgroundColor = '#000b20'
             />
             <Text style={styles.testbtntxt}>Contact us</Text>
         </TouchableOpacity>
@@ -72,7 +72,7 @@ const Settings = () => {
             <Avatar.Image
             source={require('../assets/logout.png')}
             size={45}
-            backgroundColor = 'white'
+            backgroundColor = '#000b20'
             />
             <Text style={styles.testbtntxt}>Logout</Text>
         </TouchableOpacity>
@@ -90,7 +90,7 @@ export default Settings
 const styles = StyleSheet.create({
     container: {
     flex: 1,
-    backgroundColor:'white'
+    backgroundColor:'#0B0F14'
   },
   userInfoSection: {
     paddingHorizontal: 30,
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius:ScreenWidth*0.2,
     borderBottomRightRadius:ScreenWidth*0.2,
     height:ScreenHeight*0.15,
-    backgroundColor:"#3aa3f8ff",
+    backgroundColor:"#133665",
     paddingHorizontal:ScreenWidth*0.05,
     elevation:20
   },
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     color:'white'
   },
   caption: {
-    fontSize: 13,
+    fontSize: 12,
     lineHeight: 20,
     fontWeight: '500',
     textDecorationLine:'underline',
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   flexDirection: 'row',
   alignItems: 'center', 
   padding: 12,
-  backgroundColor: 'white',
+  backgroundColor: '#0B0F14',
   borderRadius: 12,
   },
 
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   marginLeft: 12,
   fontSize: 16,
   fontWeight: '600',
-  color: '#333',
+  color: 'white',
   },
   footer:{
     alignItems:"center",

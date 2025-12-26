@@ -9,6 +9,8 @@ import { Avatar } from 'react-native-paper';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { SelectCountry } from 'react-native-element-dropdown';
 import ModelPicker from '../components/ModelPicker'
+import mqtt from "mqtt"
+import {onAuthStateChanged} from 'firebase/auth'
 
 const ScreenHeight = Dimensions.get('window').height
 const ScreenWidth = Dimensions.get('window').width
@@ -16,6 +18,29 @@ const ScreenWidth = Dimensions.get('window').width
 let Status;
 
 const Time = () => {
+
+  const navigation = useNavigation()
+
+  const [UserId , setUserId] = useState(null)
+
+  useEffect(()=>{
+      const unsubscribe = onAuthStateChanged(auth , (user) =>{
+          if(user){
+              setUserId(user.uid)
+          }
+      })
+      return unsubscribe;
+  },[])
+
+const client = mqtt.connect('ws://broker.emqx.io:8083/mqtt')
+
+client.on('connect',()=>{
+  client.subscribe(`iot/${UserId}/from_device`)
+})
+
+client.on('message',(topic,message)=>{
+  console.log(message.toString())
+})
 
 const [date,setDate]= useState(new Date())
 const [text , setText] = useState('Empty')
@@ -83,6 +108,11 @@ const onChange=(event,selectedDate)=>{
     Status : Status,
   }
 
+  let hour = tempDate.getHours()
+  let Minute = tempDate.getMinutes()
+  let mode = Status
+
+  client.publish(`iot/${UserId}/to_device`,`{"hour":${hour},"minute":${Minute},"mode":"${mode}"}`)
   console.log(obj)
 }
 
@@ -103,14 +133,22 @@ const showDatePicker = ()=>{
     onChange:udate,
   })
 }
+
+const SettingsNavigation = ()=>{
+  navigation.navigate('Settings')
+}
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.dp}>
         <Text style={styles.headertxt}>Set Schedule</Text>
+        <TouchableOpacity
+        onPress={SettingsNavigation}
+        >
         <Avatar.Image
         source={require('../assets/user.png')}
         size={50}
         />
+        </TouchableOpacity>
       </View>
 
 
@@ -126,7 +164,7 @@ const showDatePicker = ()=>{
             <Avatar.Image
             source={require('../assets/add.png')}
             size={20}
-            backgroundColor = '#2196f3'
+            backgroundColor = '#133665'
             />
           </TouchableOpacity>
           <Text style={styles.outtext}>{chooseData}</Text>
@@ -157,7 +195,7 @@ const showDatePicker = ()=>{
             <Avatar.Image
             source={require('../assets/add.png')}
             size={20}
-            backgroundColor = '#2196f3'
+            backgroundColor = '#133665'
             />
           </TouchableOpacity>
 
@@ -176,7 +214,7 @@ const showDatePicker = ()=>{
          <Avatar.Image
          source={require('../assets/clock.png')}
          size={40}
-         backgroundColor='#2196f3'
+         backgroundColor='#133665'
          />           
       </TouchableOpacity>
 
@@ -188,7 +226,7 @@ const showDatePicker = ()=>{
          <Avatar.Image
          source={require('../assets/calender.png')}
          size={40}
-         backgroundColor='#2196f3'
+         backgroundColor='#133665'
          />           
       </TouchableOpacity>
       </View>
@@ -212,6 +250,7 @@ const styles = StyleSheet.create({
 
   container:{
     flex:1,
+    backgroundColor:'#0B0F14'
   },
   dp:{
     flexDirection:'row',
@@ -224,7 +263,7 @@ const styles = StyleSheet.create({
   switches:{
     alignSelf:'center',
     marginTop:ScreenHeight*0.04,
-    backgroundColor:'#2196f3',
+    backgroundColor:'#133665',
     height:ScreenHeight*0.2,
     width:ScreenWidth*0.94,
     borderRadius:30,
@@ -239,7 +278,7 @@ const styles = StyleSheet.create({
   action:{
     alignSelf:'center',
     marginTop:ScreenHeight*0.02,
-    backgroundColor:'#2196f3',
+    backgroundColor:'#133665',
     height:ScreenHeight*0.2,
     width:ScreenWidth*0.94,
     borderRadius:30,
@@ -255,7 +294,7 @@ const styles = StyleSheet.create({
   time:{
     alignSelf:'center',
     marginTop:ScreenHeight*0.02,
-    backgroundColor:'#2196f3',
+    backgroundColor:'#133665',
     height:ScreenHeight*0.2,
     width:ScreenWidth*0.94,
     borderRadius:30,
@@ -295,7 +334,7 @@ const styles = StyleSheet.create({
     marginTop:ScreenHeight*0.04,
   },
   submitbtn:{
-    backgroundColor:'#2196f3',
+    backgroundColor:'#133665',
     padding:11,
     width:150,
     borderRadius:30,
@@ -333,7 +372,8 @@ const styles = StyleSheet.create({
   },
   headertxt:{
     fontSize:22,
-    fontWeight:'bold'
+    fontWeight:'bold',
+    color:'white'
 
   }
 })

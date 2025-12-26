@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
         fontSize : 13,
     },
     button:{
-        backgroundColor : '#2196f3',
+        backgroundColor : '#133665',
         padding : 10,
         marginTop : 15,
         textAlign : 'center',
@@ -157,10 +157,10 @@ const styles = StyleSheet.create({
         fontFamily : 'fantasy',
         fontSize : 20,
         borderWidth : 2,
-        borderColor : '#2196f3',
+        borderColor : '#133665',
     },
     signuptxt:{
-        color : '#2196f3',
+        color : '#133665',
         fontSize : 17,
         fontWeight : 'bold'
     },
