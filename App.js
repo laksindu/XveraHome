@@ -12,6 +12,8 @@ import main1 from './screens/main1';
 import Homemain from './screens/Homemain';
 import MainContainer from './screens/MainContainer';
 import Settings from './screens/Settings';
+import Setup from './screens/Setup';
+import HomeScreen from './screens/HomeScreen';
 
 const App= ()=> {
   const [initializing, setInitializing] = useState(true);
@@ -44,6 +46,8 @@ const App= ()=> {
         <Stack.Screen options ={{headerShown : false}} name="SignUpScreen" component={SignUpScreen} />
         <Stack.Screen options ={{headerShown : false}} name="Home" component={MainContainer} />
         <Stack.Screen options={{headerShown : false}} name = 'Settings' component={Settings}/>
+        <Stack.Screen options={{headerShown:false}} name='Setup' component={Setup}/>
+        <Stack.Screen options={{headerShown:false}} name='HomeScreen' component={HomeScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

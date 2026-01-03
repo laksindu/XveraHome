@@ -45,9 +45,10 @@ client.on('message',(topic,message)=>{
 const [date,setDate]= useState(new Date())
 const [text , setText] = useState('Empty')
 
-const [chooseData , setchooseData] = useState('')
+const [chooseData , setchooseData] = useState('')//for switch names from async storage
 const [chooseAction , setchooseAction] = useState('')
 const [isModalVisible, setisModeVisible] = useState(false)
+const [chooseData1 , setchooseData1] = useState('')// for switch 1 ,2 ,3 ,4 to send via mqtt
 
 const [pickerType, setPickerType] = useState('switch');
 
@@ -67,28 +68,28 @@ const uTime = (event, selectedDate)=>{
 
 const onChange=(event,selectedDate)=>{
 
-    if(chooseData == "Switch 1" && chooseAction == "ON"){
+    if(chooseData1 == "Switch 1" && chooseAction == "ON"){
        Status = 'R1_ON'
     }
-    else if(chooseData == 'Switch 1' && chooseAction == "OFF"){
+    else if(chooseData1 == 'Switch 1' && chooseAction == "OFF"){
       Status = 'R1_OFF'
     }
-    else if(chooseData == "Switch 2" && chooseAction == "ON"){
+    else if(chooseData1 == "Switch 2" && chooseAction == "ON"){
       Status = 'R2_ON'
     }
-    else if(chooseData == 'Switch 2' && chooseAction == "OFF"){
+    else if(chooseData1 == 'Switch 2' && chooseAction == "OFF"){
       Status = 'R2_OFF'
     }
-    else if(chooseData == 'Switch 3' && chooseAction == 'ON'){
+    else if(chooseData1 == 'Switch 3' && chooseAction == 'ON'){
       Status = 'R3_ON'
     }
-    else if(chooseData == 'Switch 3' && chooseAction == 'OFF'){
+    else if(chooseData1 == 'Switch 3' && chooseAction == 'OFF'){
       Status = 'R3_OFF'
     }
-    else if(chooseData == 'Switch 4' && chooseAction == 'ON'){
+    else if(chooseData1 == 'Switch 4' && chooseAction == 'ON'){
       Status = 'R4_ON'
     }
-    else if(chooseData == 'Switch 4' && chooseAction == 'OFF'){
+    else if(chooseData1 == 'Switch 4' && chooseAction == 'OFF'){
       Status = 'R4_OFF'
     }
 
@@ -178,6 +179,7 @@ const SettingsNavigation = ()=>{
               changevidible={changevidible}
               type={pickerType}
               setData={setchooseData}
+              setData1={setchooseData1}
               setActionData={setchooseAction}
             >
             </ModelPicker>

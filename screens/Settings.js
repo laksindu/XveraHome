@@ -1,11 +1,13 @@
-import { StyleSheet, Text, View,TextInput, TouchableOpacity , Dimensions} from 'react-native';
-import React, { use, useEffect } from 'react';
+import { StyleSheet, Text, View,TextInput, TouchableOpacity , Dimensions,FlatList} from 'react-native';
+import React, { use, useEffect,useState } from 'react';
 import { auth } from '../firebase';
 import { signOut } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Avatar, Caption, Icon, Title, TouchableRipple } from 'react-native-paper';
+import PromptModal from '../components/PromptModal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ScreenHeight = Dimensions.get('window').height
 const ScreenWidth = Dimensions.get('window').width
@@ -14,11 +16,23 @@ const Settings = () => {
 
   const navigation = useNavigation()
 
-  const logout =()=>{
+  const logout = async()=>{
     signOut(auth)
+    await AsyncStorage.removeItem('data')
     navigation.replace('LoginScreen')
 
   }
+
+  const Setup_navigation = () =>{
+    navigation.navigate('Setup')
+  } 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [names, setNames] = useState([]);
+
+const handleAddName = (name) => {
+    setNames([...names, name]); // Add new name
+  };
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -41,7 +55,9 @@ const Settings = () => {
       </View>
 
       <View style={styles.test}>
-        <TouchableOpacity style={styles.testbtn}>
+        <TouchableOpacity style={styles.testbtn}
+        onPress={Setup_navigation}
+        >
             <Avatar.Image
             source={require('../assets/setup.png')}
             size={45}
@@ -57,13 +73,24 @@ const Settings = () => {
             />
             <Text style={styles.testbtntxt}>About us</Text>
         </TouchableOpacity>
-                <TouchableOpacity style={styles.testbtn}>
+        <TouchableOpacity style={styles.testbtn}>
             <Avatar.Image
             source={require('../assets/contact.png')}
             size={45}
             backgroundColor = '#000b20'
             />
             <Text style={styles.testbtntxt}>Contact us</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.testbtn}
+        onPress={()=>setModalVisible(true)}
+        >
+            <Avatar.Image
+            source={require('../assets/edit.png')}
+            size={42}
+            backgroundColor = '#000b20'
+            />
+            <Text style={styles.testbtntxt}>Edit Device</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.testbtn}
@@ -79,8 +106,21 @@ const Settings = () => {
       </View>
       
       <View style = {styles.footer}>
-        <Text style={styles.footertxt}>Xvera v1.0 - 2025</Text>
+        <Text style={styles.footertxt}>Xvera Home</Text>
       </View>
+
+       <FlatList
+        data={names}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => <Text style={styles.item}>{item}</Text>}
+      />
+
+      <PromptModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onSubmit={handleAddName}
+        title="Edit Devices Name"
+      />
     </SafeAreaView>
   )
 }

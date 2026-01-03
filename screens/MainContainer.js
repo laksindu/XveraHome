@@ -52,7 +52,6 @@ const MainContainer = () => {
             <Tab.Screen options={{headerShown : false}} name={SensorName} component={Sensorpage} />
             <Tab.Screen options={{headerShown : false}} name={Timename} component={Time}/>
             <Tab.Screen options={{headerShown : false}} name={Settingsname} component={Settings} />
-
         </Tab.Navigator>
   )
 }

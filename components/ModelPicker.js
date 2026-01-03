@@ -1,18 +1,56 @@
-import { StyleSheet, Text, View, TouchableOpacity, Dimensions } from 'react-native';
-import React from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Dimensions} from 'react-native';
+import React,{useEffect,useState} from 'react';
 import { Avatar } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const SWITCHES = ['Switch 1','Switch 2','Switch 3','Switch 4'];
-const ACTIONS = ['ON','OFF'];
+
+
 
 const ScreenHeight = Dimensions.get('window').height
 const ScreenWidth = Dimensions.get('window').width
 
-const ModelPicker = ({ changevidible, type, setData, setActionData}) => {
+const ModelPicker = ({ changevidible, type, setData, setActionData , setData1}) => {
+
+const[s1,setS1] = useState("Switch 1")
+const[s2,setS2] = useState("Switch 2")
+const[s3,setS3] = useState("Siwtch 3")
+const[s4,setS4] = useState("Switch 4")
+
+const SWITCHES = ['Switch 1','Switch 2','Switch 3','Switch 4'];// these are keys
+const ACTIONS = ['ON','OFF'];
+
+const SWITCH_NAMES = { // these are display names
+  'Switch 1': `${s1}`, // these are values
+  'Switch 2': `${s2}`,
+  'Switch 3': `${s3}`,
+  'Switch 4': `${s4}`,
+};
+
+const ACTION_NAMES = {
+  ON: 'Turn ON',
+  OFF: 'Turn OFF',
+};
+
+useEffect(()=>{
+    const SetData = async ()=>{
+        const SavedData = await AsyncStorage.getItem("data")
+        if(SavedData){
+            console.log(SavedData)
+            const parsData = JSON.parse(SavedData)
+            setS1(parsData.Switch_1)
+            setS2(parsData.Switch_2)
+            setS3(parsData.Switch_3)
+            setS4(parsData.Switch_4)
+        }
+    }
+    SetData()
+})
+
 
   const onPressItem = (item) => {
     if (type === 'switch') {
-      setData(item);
+      setData(SWITCH_NAMES[item] ?? item);
+      setData1(item);
     } else {
       setActionData(item);
     }
@@ -34,7 +72,12 @@ const ModelPicker = ({ changevidible, type, setData, setActionData}) => {
             style={styles.option}
             onPress={() => onPressItem(item)}
           >
-            <Text style={styles.text}>{item}</Text>
+            <Text style={styles.text}>
+              {type === 'switch'
+                ? SWITCH_NAMES[item] ?? item
+                : ACTION_NAMES[item] ?? item}
+            </Text>
+
             <Avatar.Image
             source={require('../assets/power.png')}
             size={30}
