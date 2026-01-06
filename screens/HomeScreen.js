@@ -13,12 +13,15 @@ import {onAuthStateChanged} from 'firebase/auth'
 import prompt from 'react-native-prompt-android';
 import * as WebBrowser from 'expo-web-browser';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import PromptModal from '../components/PromptModal';
 
 
 const HomeScreen = ()=> {
 
     const [refreshing, setRefreshing] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+
+
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
@@ -49,85 +52,85 @@ const HomeScreen = ()=> {
  const[s3,setS3] = useState("Siwtch 3")
  const[s4,setS4] = useState("Switch 4")
 
+ const[pageurl,setPage] = useState()
+
  const client = mqtt.connect('ws://broker.emqx.io:8083/mqtt')
 
  client.on('connect' , () =>{
-    client.subscribe(`iot/${UserId}/from_device`)
+    client.subscribe([
+        `iot/${UserId}/from_device`,
+        `iot/${UserId}/from_device_1`,
+        `iot/${UserId}/from_device_2`,
+        `iot/${UserId}/from_device_3`,
+        `iot/${UserId}/from_device_4`,
+    ])
  })
 
-    client.on('message', async(topic,message)=>{
-    if(message == 'R1_ON'){
-        await AsyncStorage.setItem("status1","ON")// to save status in async storage
-        setSwitch1(true)
-    }
-    else if(message == 'R1_OFF'){
-        setSwitch1(false)
-        await AsyncStorage.setItem("status1","OFF")
-    }
-    else if(message == 'R2_ON'){
-        setSwitch2(true)
-        await AsyncStorage.setItem("status2","ON")
-    }
-    else if(message == 'R2_OFF'){
-        setSwitch2(false)
-        await AsyncStorage.setItem("status2","OFF")
-    }
-    else if(message == 'R3_ON'){
-        setSwitch3(true)
-        await AsyncStorage.setItem("status3","ON")
-    }
-    else if(message == 'R3_OFF'){
-        setSwitch3(false)
-        await AsyncStorage.setItem("status3","OFF")
-    }
-    else if(message == 'R4_ON'){
-        setSwitch4(true)
-        await AsyncStorage.setItem("status4","ON")
-    }
-    else if(message == 'R4_OFF'){
-        setSwitch4(false)
-        await AsyncStorage.setItem("status4","OFF")
-    }
- })
+    useEffect(()=>{
+        const Mqtt = ()=>{
+            client.on('message',(topic,message)=>{
+                if(topic == `iot/${UserId}/from_device_1`){
+                    if(message == "R1_ON"){
+                        setSwitch1(true)
+                    }
+                    else if(message == "R1_OFF"){
+                        setSwitch1(false)
+                    }
+                }
+                else if(topic == `iot/${UserId}/from_device_2`){
+                    if(message == "R2_ON"){
+                        setSwitch2(true)
+                    }
+                    else if(message == "R2_OFF"){
+                        setSwitch2(false)
+                    }
+                }
+                else if(topic == `iot/${UserId}/from_device_3`){
+                    if(message == "R3_ON"){
+                        setSwitch3(true)
+                    }
+                    else if(message == "R3_OFF"){
+                        setSwitch3(false)
+                    }
+                }
+                else if(topic == `iot/${UserId}/from_device_4`){
+                    if(message == "R4_ON"){
+                        setSwitch4(true)
+                    }
+                    else if(message == "R4_OFF"){
+                        setSwitch4(false)
+                    }
+                }
+            })
+        }
+        Mqtt()
+    })
 
- 
- 
+    useEffect(()=>{
+        const data = ()=>{
+            client.on('message',(topic,message)=>{
+                if(topic == `iot/${UserId}/from_device`){
+                    if(message == "online"){
+                        console.log("Device is online")
+                        //alert("Device is online")
+                        setPage(true)
+                        setRefreshing(false)
+                    }
+                    else if(message == "offline"){
+                        console.log("Device is offline")
+                        setPage(false)
+                        setRefreshing(false)
+                    }
+                }
+            })
+        }
+        data()
+    })
 
- useEffect(()=>{ // to get switch names from async storage with their status
-    const setData = async ()=>{
-        const saved_status1 = await AsyncStorage.getItem("status1")
-        const saved_status2 = await AsyncStorage.getItem("status2")
-        const saved_status3 = await AsyncStorage.getItem("status3")
-        const saved_status4 = await AsyncStorage.getItem("status4")
+useEffect(()=>{
+    setRefreshing(true)
+},[])
 
-        if(saved_status1 === "ON"){
-            setSwitch1(true)
-        }
-        else if(saved_status1 === "OFF"){
-            setSwitch1(false)
-        }
-        if(saved_status2 === "ON"){
-            setSwitch2(true)
-        }
-        else if(saved_status2 === "OFF"){
-            setSwitch2(false)
-        }
-        if(saved_status3 === "ON"){
-            setSwitch3(true)
-        }
-        else if(saved_status3 === "OFF"){
-            setSwitch3(false)
-        }
-        if(saved_status4 === "ON"){
-            setSwitch4(true)
-        }
-        else if(saved_status4 === "OFF"){
-            setSwitch4(false)
-        }
-
-    }
-    setData()
- })
 
  const SettingsNavigation = ()=>{
     navigation.navigate('Settings')
@@ -165,6 +168,8 @@ useEffect(()=>{
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }>
 
+    {pageurl == true &&(
+        <View>
         <View style={styles.userdp}>
             <Text style={styles.headertxt}>My Home</Text>
             <TouchableOpacity
@@ -179,14 +184,15 @@ useEffect(()=>{
         </View>
         <Text style={{marginLeft:25 , marginTop:10 , fontSize:18 , color:'white'}}> Hey Welcome ! 🖐</Text>
 
-         <TouchableOpacity
+
+        <TouchableOpacity
         style={styles.Power_Usage}
         onPress={Power}
         >
          <MaterialCommunityIcons  name="lightning-bolt" size={30} style={{color:'yellow',backgroundColor:'#646d80',borderRadius:30}}/>   
          <Text style={styles.Power_txt}>40 W</Text>
           <MaterialCommunityIcons  name="arrow-right" size={30} style={{color:'white',}}/>
-        </TouchableOpacity>       
+        </TouchableOpacity>  
 
         <Text style={{color:'white',marginTop:25,marginLeft:ScreenWidth*0.07,fontWeight:'bold'}}>My Devices</Text>
 
@@ -206,7 +212,6 @@ useEffect(()=>{
                 circleColor={"#2a497a"}
                 toggle = {switch1}
                 setToggle={(value)=>{
-                   setSwitch1(value)
                     if(value == true){
                         //console.log('checked ' + value)
                         client.publish(`iot/${UserId}/to_device`,'R1_ON')
@@ -236,7 +241,7 @@ useEffect(()=>{
                 circleColor={"#2a497a"}
                 toggle = {Switch2}
                 setToggle={(value2)=>{
-                    setSwitch2(value2)
+                    //setSwitch2(value2)
                     if(value2 == true){
                         //console.log('checked ' + value2)
                         client.publish(`iot/${UserId}/to_device`,'R2_ON')
@@ -250,7 +255,8 @@ useEffect(()=>{
             </View>
         </View>
 
-        <View style={styles.downswitches}>
+
+            <View style={styles.downswitches}>
             <View style={[styles.switch3 , {backgroundColor:Switch3? '#133665':'#646d80'}]}>
                 <MaterialCommunityIcons  name="light-switch" size={30} color= {Switch3? 'white':'#2e3647'} style={{marginLeft:15 , marginTop:15}}/>
                 <Text style={[styles.switch_txt,{color:Switch3? 'white':'#2e3647'}]}>{s3}</Text>
@@ -264,7 +270,7 @@ useEffect(()=>{
                 circleColor={"#2a497a"}
                 toggle = {Switch3}
                 setToggle={(value3)=>{
-                    setSwitch3(value3)
+                    //setSwitch3(value3)
                     if(value3 == true){
                         //console.log('checked ' + value3)
                         client.publish(`iot/${UserId}/to_device`,'R3_ON')
@@ -276,7 +282,8 @@ useEffect(()=>{
                 />
                 </View>
             </View>
-            <View style={[styles.switch4,{backgroundColor:Switch4? '#133665':'#646d80'}]}>
+
+           <View style={[styles.switch4,{backgroundColor:Switch4? '#133665':'#646d80'}]}>
 
                 <MaterialCommunityIcons  name="light-switch" size={30} color= {Switch4? 'white':'#2e3647'} style={{marginLeft:15 , marginTop:15}}/>
                 
@@ -291,7 +298,7 @@ useEffect(()=>{
                 circleColor={"#2a497a"}
                 toggle = {Switch4}
                 setToggle={(value4)=>{
-                    setSwitch4(value4)
+                    //setSwitch4(value4)
                     if(value4 == true){
                         //console.log('checked ' + value4)
                         client.publish(`iot/${UserId}/to_device`,'R4_ON')
@@ -303,10 +310,30 @@ useEffect(()=>{
                 />
                 </View>
             </View>
+
         </View>
+    </View>)}
 
+       {pageurl == false &&(
+         <View style={styles.offlineContainer}>
 
+            <Image
+            source={require('../assets/disconnected.png')}
+            style={styles.img}
+            />
+            
+            <Text style={styles.disDevcietxt}>No Device found</Text>
+            <Text style={styles.disDevcietxt1}>Please make sure your device is powered on</Text>
+            <Text style={styles.disDevcietxt2}>and connected to the internet.</Text>
+
+            <TouchableOpacity
+            style={styles.addbtn}
+            >
+            <Text style={styles.addtxt}>Add Device</Text>
+            </TouchableOpacity>
+        </View>)}
         
+
     </ScrollView>
     </SafeAreaView>
     </SafeAreaProvider>
@@ -403,11 +430,6 @@ const styles = StyleSheet.create({
         fontWeight:'bold',
         fontSize:15
     },
-    addtxt:{
-        color:'white',
-        //marginLeft:ScreenWidth*0.8,
-        marginTop:10,
-    },
     addView:{
         flexDirection:'row',
         justifyContent:'space-between',
@@ -436,6 +458,49 @@ const styles = StyleSheet.create({
         fontWeight:'bold',
         //alignSelf:'center'
         marginRight:ScreenWidth*0.4
+    },
+    offlineContainer:{
+        alignSelf:'center'
+    },
+    img:{
+        width:ScreenWidth*0.9,
+        height:ScreenHeight*0.4,
+        resizeMode:'contain',
+        marginTop:ScreenHeight*0.1
+    },
+    disDevcietxt:{
+        color:'white',
+        fontSize:23,
+        fontWeight:'bold',
+        alignSelf:'center',
+        marginTop:ScreenHeight*0.01
+    },
+    disDevcietxt1:{
+        color:'white',
+        fontSize:16,
+        alignSelf:'center',
+        marginTop:ScreenHeight*0.03
+    },
+    disDevcietxt2:{
+       color:'white',
+       fontSize:16,
+       marginTop:5,
+       alignSelf:'center' 
+    },
+    addbtn:{
+        width:130,
+        height:40,
+        backgroundColor:'#133665',
+        borderRadius:20,
+        marginTop:ScreenHeight*0.05,
+        alignSelf:'center',
+        alignItems:'center'
+    },
+    addtxt:{
+        marginTop:7,
+        color:'white',
+        fontWeight:'bold',
+        fontSize:15
     }
 })
 
