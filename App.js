@@ -9,11 +9,12 @@ import main from './screens/main';
 import { auth } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import main1 from './screens/main1';
-import Homemain from './screens/Homemain';
 import MainContainer from './screens/MainContainer';
 import Settings from './screens/Settings';
 import Setup from './screens/Setup';
-import HomeScreen from './screens/HomeScreen';
+import Connect from './screens/Connect';
+
+
 
 const App= ()=> {
   const [initializing, setInitializing] = useState(true);
@@ -42,24 +43,16 @@ const App= ()=> {
         <Stack.Screen options={{headerShown : false}} name="LoginScreen"  component={LoginScreen} />
         <Stack.Screen options={{headerShown: false}} name="Main" component={main}/>
         <Stack.Screen options={{headerShown: false}} name='main1' component={main1}/>
-        <Stack.Screen options={{headerShown : false}} name='Homemain' component={Homemain}/>
         <Stack.Screen options ={{headerShown : false}} name="SignUpScreen" component={SignUpScreen} />
         <Stack.Screen options ={{headerShown : false}} name="Home" component={MainContainer} />
         <Stack.Screen options={{headerShown : false}} name = 'Settings' component={Settings}/>
         <Stack.Screen options={{headerShown:false}} name='Setup' component={Setup}/>
-        <Stack.Screen options={{headerShown:false}} name='HomeScreen' component={HomeScreen}/>
+        <Stack.Screen options={{headerShown:false}} name='Connect' component={Connect}/>
+
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
 export default App;

@@ -27,6 +27,8 @@ const Sensor = () => {
   const [humiditysensor , setHumidty] = useState(0)
   const [mqdata , setMqdata] = useState(0)
   const [activePage, setActivePage] = useState('temp');
+  const [password , setPassword] = useState('')
+  const [ssid , setSsid] = useState('')
 
   //for model picker
   const [chooseData , setchooseData] = useState('')//for switch names from async storage

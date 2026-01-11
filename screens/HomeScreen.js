@@ -19,7 +19,8 @@ import PromptModal from '../components/PromptModal';
 const HomeScreen = ()=> {
 
     const [refreshing, setRefreshing] = useState(false);
-    const [modalVisible, setModalVisible] = useState(false);
+    const[stopRefreh,setStop] = useState(true)
+    
 
 
 
@@ -106,6 +107,11 @@ const HomeScreen = ()=> {
         Mqtt()
     })
 
+    //This useEffect is for online offline status
+    //This useEffect set pageurl state according to device status received from mqtt topic iot/userid/from_device
+    //When device is online pageurl is true and when device is offline pageurl is false
+    //So in the return statement we can use {pageurl == true && (...)} to show online page and {pageurl == false && (...)} to show offline page
+    //message "online" and "offline" is sent from device with retained feature of mqtt so app get status on connection
     useEffect(()=>{
         const data = ()=>{
             client.on('message',(topic,message)=>{
@@ -115,11 +121,13 @@ const HomeScreen = ()=> {
                         //alert("Device is online")
                         setPage(true)
                         setRefreshing(false)
+                        setStop(false)
                     }
                     else if(message == "offline"){
                         console.log("Device is offline")
                         setPage(false)
                         setRefreshing(false)
+                        setStop(false)//send parameter to setStop function then timeout will stop
                     }
                 }
             })
@@ -127,8 +135,20 @@ const HomeScreen = ()=> {
         data()
     })
 
+    //This useEffect is to set initial refreshing state to true on component mount
+    //So that when app is opened refreshing indicator is shown until device status is received from mqtt
 useEffect(()=>{
     setRefreshing(true)
+
+    setTimeout(()=>{
+        setRefreshing(false)
+        setPage(false)
+    },3000)
+
+    return ()=>{
+        clearTimeout(stopRefreh)//clear timeout with state varible
+    }
+
 },[])
 
 
@@ -136,13 +156,10 @@ useEffect(()=>{
     navigation.navigate('Settings')
  }
 
- const Power = ()=>{
-    navigation.navigate('Homemain')
- }
 
 
 useEffect(()=>{
-    const SetData = async ()=>{
+    const SetData = async()=>{
         const SavedData = await AsyncStorage.getItem("data")
         if(SavedData){
            // console.log(SavedData)
@@ -155,6 +172,10 @@ useEffect(()=>{
     }
     SetData()
 })
+
+const ConnectNav = ()=>{
+    navigation.navigate('Connect')
+}
 
   return (
     <>
@@ -184,17 +205,7 @@ useEffect(()=>{
         </View>
         <Text style={{marginLeft:25 , marginTop:10 , fontSize:18 , color:'white'}}> Hey Welcome ! 🖐</Text>
 
-
-        <TouchableOpacity
-        style={styles.Power_Usage}
-        onPress={Power}
-        >
-         <MaterialCommunityIcons  name="lightning-bolt" size={30} style={{color:'yellow',backgroundColor:'#646d80',borderRadius:30}}/>   
-         <Text style={styles.Power_txt}>40 W</Text>
-          <MaterialCommunityIcons  name="arrow-right" size={30} style={{color:'white',}}/>
-        </TouchableOpacity>  
-
-        <Text style={{color:'white',marginTop:25,marginLeft:ScreenWidth*0.07,fontWeight:'bold'}}>My Devices</Text>
+        <Text style={{color:'white',marginTop:55,marginLeft:ScreenWidth*0.07,fontWeight:'bold'}}>My Devices</Text>
 
         <View style={styles.upswitches}>
             <View style={[styles.switch1,{backgroundColor:switch1? '#133665':'#646d80'}]}
@@ -328,6 +339,7 @@ useEffect(()=>{
 
             <TouchableOpacity
             style={styles.addbtn}
+            onPress={ConnectNav}
             >
             <Text style={styles.addtxt}>Add Device</Text>
             </TouchableOpacity>
@@ -505,3 +517,14 @@ const styles = StyleSheet.create({
 })
 
 export default HomeScreen;
+
+//get data from mqtt and show online offline status ( get data from topic iot/userid/from_device ) and set pageurl state and call it with {pageurl == true && (..)} and {pageurl == false && (...)}
+//this is {pageurl == true && (..)} and {pageurl == false && (...)} in the return statement for showing online offline status page
+//And get switch status from mqtt topics iot/userid/from_device_1 , iot/userid/from_device_2 , iot/userid/from_device_3 , iot/userid/from_device_4 and set switch states with subscribed data
+//updating switch states after open app this updating is send from mqtt brocker after open app ( brocker detect app online from pingreq and send saved switches data to this client(phone/app) from same userid and app subscribe to that topics and get data and set switch states. arduino use retained message feature of mqtt )
+//So to update switch states on pull to refresh implement setRefreshing(false) when device is online and setRefreshing(true) when device is offline in the useEffect for pageurl state
+//And also set initial refreshing state to true in another useEffect on component mount
+//retained message feature is used in arduino code to send last switch states when app(phone) get online
+//So when app get online brocker send last saved switch states to app and app set switch states accordingly
+//Online and offline messages are also sent with retained feature so app get online/offline status on connection
+//in arduino code use client.publish(topic,message, {retain:true}) to send retained messages
