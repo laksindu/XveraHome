@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View,TextInput, TouchableOpacity , Dimensions, Alert,Image,StatusBar,ScrollView,RefreshControl} from 'react-native';
-import React, { use, useEffect, useState ,useCallback} from 'react';
+import { StyleSheet, Text, View,TextInput, TouchableOpacity , Dimensions, Alert,Image,StatusBar,ScrollView,RefreshControl,PermissionsAndroid, Platform,ActivityIndicator} from 'react-native';
+import React, { use, useEffect, useState ,useCallback,useRef} from 'react';
 import { auth } from '../firebase';
 import { signOut } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
@@ -19,7 +19,6 @@ import PromptModal from '../components/PromptModal';
 const HomeScreen = ()=> {
 
     const [refreshing, setRefreshing] = useState(false);
-    const[stopRefreh,setStop] = useState(true)
     
 
 
@@ -43,19 +42,32 @@ const HomeScreen = ()=> {
         return unsubscribe;
     },[])
 
- const[switch1,setSwitch1] = useState()
+ const[switch1,setSwitch1] = useState()//for siwtch states => update from subscribe message and change switch state ( backgroudcolour,toggel)
  const[Switch2, setSwitch2] = useState()
  const[Switch3, setSwitch3] = useState()
  const[Switch4, setSwitch4] = useState()
 
- const[s1,setS1] = useState("Switch 1")
+ const[s1,setS1] = useState("Switch 1")// for siwtch name state => get name from asyncStorage and store it and display in the switch view
  const[s2,setS2] = useState("Switch 2")
  const[s3,setS3] = useState("Siwtch 3")
  const[s4,setS4] = useState("Switch 4")
 
+ const[s1Refresh , s1SetRefresh] = useState()// for show refresh until switch State update ( for ux becuase if user turn on switch this will show refresh animation until update switch state from subscribe message )
+ const[s2Refresh , s2SetRefresh] = useState()
+ const[s3Refresh , s3SetRefresh] = useState()
+ const[s4Refresh , s4SetRefresh] = useState()
+
+
+ const[s1Visibal , s1SetVisibal] = useState()// for change visibility of the switches button to make space to show refersh animation until update switch state from subscribe message
+ const[s2Visibal , s2SetVisibal] = useState()
+ const[s3Visibal , s3SetVisibal] = useState()
+ const[s4Visibal , s4SetVisibal] = useState()
+
+
+
  const[pageurl,setPage] = useState()
 
- const client = mqtt.connect('ws://broker.emqx.io:8083/mqtt')
+ const client = mqtt.connect('wss://broker.emqx.io:8084/mqtt')
 
  client.on('connect' , () =>{
     client.subscribe([
@@ -67,39 +79,60 @@ const HomeScreen = ()=> {
     ])
  })
 
+
+
     useEffect(()=>{
         const Mqtt = ()=>{
             client.on('message',(topic,message)=>{
                 if(topic == `iot/${UserId}/from_device_1`){
                     if(message == "R1_ON"){
                         setSwitch1(true)
+                        s1SetRefresh(false)// send false parameter to refresh state after subscribe message then the switch refresh animation will stop
+                        s1SetVisibal(true)//  send true paramter to siwtch visibility to show switches button (I false this because need to make a space for animate the switch refresh in sswitch view )
                     }
                     else if(message == "R1_OFF"){
                         setSwitch1(false)
+                        s1SetRefresh(false)
+                        s1SetVisibal(true)
                     }
                 }
                 else if(topic == `iot/${UserId}/from_device_2`){
                     if(message == "R2_ON"){
                         setSwitch2(true)
+                        s2SetRefresh(false)
+                        s2SetVisibal(true)
                     }
                     else if(message == "R2_OFF"){
                         setSwitch2(false)
+                        s2SetRefresh(false)
+                        s2SetVisibal(true)
                     }
                 }
                 else if(topic == `iot/${UserId}/from_device_3`){
                     if(message == "R3_ON"){
                         setSwitch3(true)
+                        s3SetRefresh(false)
+                        s3SetVisibal(true)
                     }
                     else if(message == "R3_OFF"){
                         setSwitch3(false)
+                        s3SetRefresh(false)
+                        s3SetVisibal(true)
+
                     }
                 }
                 else if(topic == `iot/${UserId}/from_device_4`){
                     if(message == "R4_ON"){
                         setSwitch4(true)
+                        s4SetRefresh(false)
+                        s4SetVisibal(true)
+
                     }
                     else if(message == "R4_OFF"){
                         setSwitch4(false)
+                        s4SetRefresh(false)
+                        s4SetVisibal(true)
+
                     }
                 }
             })
@@ -107,27 +140,19 @@ const HomeScreen = ()=> {
         Mqtt()
     })
 
-    //This useEffect is for online offline status
-    //This useEffect set pageurl state according to device status received from mqtt topic iot/userid/from_device
-    //When device is online pageurl is true and when device is offline pageurl is false
-    //So in the return statement we can use {pageurl == true && (...)} to show online page and {pageurl == false && (...)} to show offline page
-    //message "online" and "offline" is sent from device with retained feature of mqtt so app get status on connection
-    useEffect(()=>{
+useEffect(()=>{
         const data = ()=>{
             client.on('message',(topic,message)=>{
                 if(topic == `iot/${UserId}/from_device`){
                     if(message == "online"){
                         console.log("Device is online")
-                        //alert("Device is online")
                         setPage(true)
                         setRefreshing(false)
-                        setStop(false)
                     }
                     else if(message == "offline"){
                         console.log("Device is offline")
                         setPage(false)
                         setRefreshing(false)
-                        setStop(false)//send parameter to setStop function then timeout will stop
                     }
                 }
             })
@@ -137,17 +162,14 @@ const HomeScreen = ()=> {
 
     //This useEffect is to set initial refreshing state to true on component mount
     //So that when app is opened refreshing indicator is shown until device status is received from mqtt
+
 useEffect(()=>{
     setRefreshing(true)
 
     setTimeout(()=>{
-        setRefreshing(false)
+        setRefreshing(true)
         setPage(false)
     },3000)
-
-    return ()=>{
-        clearTimeout(stopRefreh)//clear timeout with state varible
-    }
 
 },[])
 
@@ -203,7 +225,7 @@ const ConnectNav = ()=>{
             />
             </TouchableOpacity>
         </View>
-        <Text style={{marginLeft:25 , marginTop:10 , fontSize:18 , color:'white'}}> Hey Welcome ! 🖐</Text>
+        <Text style={{marginLeft:25 , marginTop:10 , fontSize:18 , color:'white'}}> Hey Welcome</Text>
 
         <Text style={{color:'white',marginTop:55,marginLeft:ScreenWidth*0.07,fontWeight:'bold'}}>My Devices</Text>
 
@@ -211,10 +233,16 @@ const ConnectNav = ()=>{
             <View style={[styles.switch1,{backgroundColor:switch1? '#133665':'#646d80'}]}
             >
                 <MaterialCommunityIcons  name="light-switch" size={30} color= {switch1? 'white':'#2e3647'} style={{marginLeft:15 , marginTop:15}}/>
-                <Text style={[styles.switch_txt,{color:switch1? 'white':'#2e3647'}]}>{s1}</Text>
-
-
-                <View style={styles.toggelSwitch}>
+                <Text style={[styles.switch_txt,{color:switch1? 'white':'#2e3647'}]}>{s1}</Text>                   
+                
+                {/* if s1Refresh == true then the switch refresh animation will start */ }
+                {s1Refresh && (
+                    <ActivityIndicator style= {styles.indicator}size={30} color={switch1? "white" : "#2e3647"}/>
+                )
+                }
+                
+                {/* if s1Visibal == true this switch button (toggelSwitch) view will show ( this add because if switch refresh is true this will false and make a space to show animation then after get mqtt subscribe message that s1SetVisibal(true) and this view will show ) */}
+                {s1Visibal &&(<View style={styles.toggelSwitch}>
                 <Text style={[styles.tog_txt,{color:switch1? 'white':'#2e3647'}]}>{switch1?'On':'Off'}</Text>
                 <Toggle
                 color = {'#e0e2e4ff'}
@@ -226,13 +254,17 @@ const ConnectNav = ()=>{
                     if(value == true){
                         //console.log('checked ' + value)
                         client.publish(`iot/${UserId}/to_device`,'R1_ON')
+                        s1SetRefresh(true)//set switch refresh true with publishing message and show the switch refresh ( until get mqtt subscribe message then this will false and sswitch refresh is stop then if user click publish message again this will true and switch refresh animation is start  )
+                        s1SetVisibal(false)// set switch Visibal to false to show switch refreshing after click toggel ( until get mqtt subscribe message then this will true and show the toggel button to click next state (on/off) then if user click publish message again this will false and toggel button display will none to show switch refereshing)
                     }
                     else if(value == false){
                         client.publish(`iot/${UserId}/to_device`,'R1_OFF')
+                        s1SetRefresh(true)
+                        s1SetVisibal(false)
                     }
                 }}
                 />
-                </View>
+                </View>)}
 
 
             </View>
@@ -243,7 +275,13 @@ const ConnectNav = ()=>{
 
                 <Text style={[styles.switch_txt,{color:Switch2? 'white':'#2e3647'}]}>{s2}</Text>
 
-                <View style={styles.toggelSwitch}>
+                {s2Refresh && (
+                    <ActivityIndicator style= {styles.indicator}size={30} color={Switch2? "white" : "#2e3647"}/>
+                )
+                }                
+
+                {s2Visibal && (<View style={styles.toggelSwitch}>
+                    
                 <Text style={[styles.tog_txt,{color:Switch2? 'white':'#2e3647'}]}>{Switch2?'On':'Off'}</Text>
                 <Toggle
                 color = {'#e0e2e4ff'}
@@ -256,13 +294,18 @@ const ConnectNav = ()=>{
                     if(value2 == true){
                         //console.log('checked ' + value2)
                         client.publish(`iot/${UserId}/to_device`,'R2_ON')
+                        s2SetRefresh(true)
+                        s2SetVisibal(false)
                     }
                     else if(value2 == false){
                         client.publish(`iot/${UserId}/to_device`,'R2_OFF')
+                        s2SetRefresh(true)
+                        s2SetVisibal(false)
                     }
                 }}
                 />
                 </View>
+                )}
             </View>
         </View>
 
@@ -272,7 +315,12 @@ const ConnectNav = ()=>{
                 <MaterialCommunityIcons  name="light-switch" size={30} color= {Switch3? 'white':'#2e3647'} style={{marginLeft:15 , marginTop:15}}/>
                 <Text style={[styles.switch_txt,{color:Switch3? 'white':'#2e3647'}]}>{s3}</Text>
 
-                <View style={styles.toggelSwitch}>
+                {s3Refresh && (
+                    <ActivityIndicator style= {styles.indicator}size={30} color={Switch3? "white" : "#2e3647"}/>
+                )
+                }
+
+                {s3Visibal && (<View style={styles.toggelSwitch}>
                 <Text style={[styles.tog_txt,{color:Switch3? 'white':'#2e3647'}]}>{Switch3? 'On':'Off'}</Text>
                 <Toggle
                 color = {'#e0e2e4ff'}
@@ -285,13 +333,17 @@ const ConnectNav = ()=>{
                     if(value3 == true){
                         //console.log('checked ' + value3)
                         client.publish(`iot/${UserId}/to_device`,'R3_ON')
+                        s3SetRefresh(true)
+                        s3SetVisibal(false)
                     }
                     else if(value3 == false){
                         client.publish(`iot/${UserId}/to_device`,'R3_OFF')
+                        s3SetRefresh(true)
+                        s3SetVisibal(false)
                     }
                 }}
                 />
-                </View>
+                </View>)}
             </View>
 
            <View style={[styles.switch4,{backgroundColor:Switch4? '#133665':'#646d80'}]}>
@@ -300,7 +352,12 @@ const ConnectNav = ()=>{
                 
                 <Text style={[styles.switch_txt,{color:Switch4? 'white':'#2e3647'}]}>{s4}</Text>
 
-                <View style={styles.toggelSwitch}>
+                {s4Refresh && (
+                    <ActivityIndicator style= {styles.indicator}size={30} color={Switch4? "white" : "#2e3647"}/>
+                )}
+
+
+                {s4Visibal && (<View style={styles.toggelSwitch}>
                 <Text style={[styles.tog_txt,{color:Switch4? 'white':'#2e3647'}]}>{Switch4? 'On':'Off'}</Text>
                 <Toggle
                 color = {'#e0e2e4ff'}
@@ -313,13 +370,18 @@ const ConnectNav = ()=>{
                     if(value4 == true){
                         //console.log('checked ' + value4)
                         client.publish(`iot/${UserId}/to_device`,'R4_ON')
+                        s4SetRefresh(true)
+                        s4SetVisibal(false)
                     }
                     else if(value4 == false ){
                         client.publish(`iot/${UserId}/to_device`,'R4_OFF')
+                        s4SetRefresh(true)
+                        s4SetVisibal(false)
                     }
                 }}
                 />
                 </View>
+                )}
             </View>
 
         </View>
@@ -513,6 +575,10 @@ const styles = StyleSheet.create({
         color:'white',
         fontWeight:'bold',
         fontSize:15
+    },
+    indicator:{
+        marginRight:100,
+        marginTop:30
     }
 })
 

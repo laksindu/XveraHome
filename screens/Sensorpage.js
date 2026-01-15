@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View,TextInput, TouchableOpacity , Dimensions, Alert,Image,StatusBar,ScrollView,Modal} from 'react-native';
-import React, { use, useEffect ,useState} from 'react';
+import { StyleSheet, Text, View,TextInput, TouchableOpacity , Dimensions, Alert,Image,StatusBar,ScrollView,Modal , PermissionsAndroid, Platform} from 'react-native';
+import React, { use, useEffect ,useState,useRef} from 'react';
 import { auth} from '../firebase';
 import { signOut } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
@@ -12,6 +12,7 @@ import { AnimatedCircularProgress } from 'react-native-circular-progress'
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ModelPicker from '../components/ModelPicker';
 import Slider from '@react-native-community/slider';
+
 
 const ScreenHeight = Dimensions.get('window').height
 const ScreenWidth = Dimensions.get('window').width
@@ -27,8 +28,6 @@ const Sensor = () => {
   const [humiditysensor , setHumidty] = useState(0)
   const [mqdata , setMqdata] = useState(0)
   const [activePage, setActivePage] = useState('temp');
-  const [password , setPassword] = useState('')
-  const [ssid , setSsid] = useState('')
 
   //for model picker
   const [chooseData , setchooseData] = useState('')//for switch names from async storage
@@ -54,12 +53,24 @@ const Sensor = () => {
   },[])// get user id from firebase 
   // auth.currentUser.uid not working
 
+async function requestWifiPermission() {
+  if (Platform.OS === 'android' && Platform.Version >= 33) {
+    await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.NEARBY_WIFI_DEVICES
+    );
+  }
+}
+useEffect(() => {
+  requestWifiPermission();
+}, []);
+
 let client;
+/* my old logic 
 useEffect(()=>{
 
   if(UserId){
 
-  const client = mqtt.connect("ws://broker.emqx.io:8083/mqtt", {//connect with brocker
+  const client = mqtt.connect('wss://broker.emqx.io:8084/mqtt', {//connect with brocker
   });
   //subscribeing topic 
   client.on("connect", () => {
@@ -68,7 +79,9 @@ useEffect(()=>{
       `iot/${UserId}/from_device/h`,
       `iot/${UserId}/from_device/mqdata`
     ]);
-  });
+  }); 
+
+
   
   setClient(client)
   //get message payload
@@ -90,7 +103,40 @@ useEffect(()=>{
 
   });
   }
-},[UserId])
+},[UserId])*/
+
+const clientRef = useRef(null);
+
+useEffect(() => {
+  if (!UserId) return;
+
+  const client = mqtt.connect('wss://broker.emqx.io:8084/mqtt');
+
+  clientRef.current = client;
+
+  client.on("connect", () => {
+    client.subscribe([
+      `iot/${UserId}/from_device/t`,
+      `iot/${UserId}/from_device/h`,
+      `iot/${UserId}/from_device/mqdata`
+    ]);
+  });
+
+  client.on("message", (topic, message) => {
+    const msg = message.toString();
+    if (topic === `iot/${UserId}/from_device/t`) {
+      setsensor(parseFloat(msg));
+    } else if (topic === `iot/${UserId}/from_device/h`) {
+      setHumidty(parseFloat(msg));
+    } else if (topic === `iot/${UserId}/from_device/mqdata`) {
+      setMqdata(parseFloat(msg));
+    }
+  });
+
+  return () => {
+    client.end(true); // disconnect old client when effect re-runs
+  };
+}, [UserId]);
 
 console.log(chooseData1)
 
@@ -99,6 +145,7 @@ console.log(chooseData1)
     navigation.navigate('Settings')
   }
 
+  /* my logic
   const sendData = ()=>{
     let Status;
     let TempRange = range
@@ -131,7 +178,27 @@ console.log(chooseData1)
     tempClinet.publish(`iot/${UserId}/to_device`,"auto")
     
    // console.log(`{"Mode":"${Status}","Range":${TempRange}}`)
-  }
+  }*/
+
+
+   const sendData = () => {
+  if (!clientRef.current || !UserId) return;
+
+  let Status;
+  let TempRange = range;
+
+  if (chooseData1 === "Switch 1") Status = chooseAction === "ON" ? "R1_ON" : "R1_OFF";
+  else if (chooseData1 === "Switch 2") Status = chooseAction === "ON" ? "R2_ON" : "R2_OFF";
+  else if (chooseData1 === "Switch 3") Status = chooseAction === "ON" ? "R3_ON" : "R3_OFF";
+  else if (chooseData1 === "Switch 4") Status = chooseAction === "ON" ? "R4_ON" : "R4_OFF";
+
+  // Publish JSON message
+  clientRef.current.publish(
+    `iot/${UserId}/to_device`,`{"Range":${TempRange},"Mode":"${Status}"}`);
+
+  // Publish auto
+  clientRef.current.publish(`iot/${UserId}/to_device`, "auto");
+};
 
   return (
     <SafeAreaView style={styles.container}>

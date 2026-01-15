@@ -34,9 +34,9 @@ const LoginScreen= ()=>{
         signInWithEmailAndPassword(auth, Email, Password)
         .then((userCredentials)=>{
             const user = userCredentials.user;
-            console.log('Registered with:', user.email);
+            //console.log('Registered with:', user.email);
         })
-        .catch(error=>alert(error.message));
+        .catch(error=>alert("The email/password is incorrect."));
     }
 
   return (
@@ -52,12 +52,14 @@ const LoginScreen= ()=>{
     <View style={styles.container}>
         <TextInput
             placeholder='Email'
+            placeholderTextColor={'gray'}
             style ={styles.input}
             value={Email}
             onChangeText={text=>{ setEmail(text)}}
         ></TextInput>
         <TextInput
             placeholder='Password'
+            placeholderTextColor={'gray'}
             style ={styles.input}
             secureTextEntry={true}
             value={Password}
@@ -77,7 +79,7 @@ const LoginScreen= ()=>{
         <Text style={styles.signuptxt}>Sign Up</Text>
         </TouchableOpacity>
         <View style={styles.footer}>
-            <Text style={styles.footertxt}>Xvera v1.0 - 2025</Text>
+            <Text style={styles.footertxt}>Xvera v1.0 - 2026</Text>
         </View>
 
     </View>
@@ -110,6 +112,7 @@ const styles = StyleSheet.create({
         marginVertical : 10,
         borderRadius: 18,
         fontSize : 13,
+        color:'black'
     },
     button:{
         backgroundColor : '#133665',

@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View ,PermissionsAndroid, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
@@ -11,8 +11,8 @@ import { onAuthStateChanged } from 'firebase/auth';
 import main1 from './screens/main1';
 import MainContainer from './screens/MainContainer';
 import Settings from './screens/Settings';
-import Setup from './screens/Setup';
 import Connect from './screens/Connect';
+
 
 
 
@@ -46,7 +46,6 @@ const App= ()=> {
         <Stack.Screen options ={{headerShown : false}} name="SignUpScreen" component={SignUpScreen} />
         <Stack.Screen options ={{headerShown : false}} name="Home" component={MainContainer} />
         <Stack.Screen options={{headerShown : false}} name = 'Settings' component={Settings}/>
-        <Stack.Screen options={{headerShown:false}} name='Setup' component={Setup}/>
         <Stack.Screen options={{headerShown:false}} name='Connect' component={Connect}/>
 
       </Stack.Navigator>
@@ -56,3 +55,9 @@ const App= ()=> {
 
 
 export default App;
+
+/* ---- NEED TO UPDATE --- */
+
+// * local contorl with WebSocket
+// * App responcive
+// * Power Meter

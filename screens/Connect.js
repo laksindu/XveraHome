@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View,TextInput, TouchableOpacity , Dimensions, Alert,Image,StatusBar,ScrollView,RefreshControl, KeyboardAvoidingView} from 'react-native';
+import { StyleSheet, Text, View,TextInput, TouchableOpacity , Dimensions, Alert,Image,StatusBar,ScrollView,RefreshControl, KeyboardAvoidingView,AppState,PermissionsAndroid, Platform} from 'react-native';
 import React, { use, useEffect, useState ,useCallback} from 'react';
 import { auth } from '../firebase';
 import { signOut } from 'firebase/auth';
@@ -13,10 +13,10 @@ import {onAuthStateChanged} from 'firebase/auth'
 import prompt from 'react-native-prompt-android';
 import * as WebBrowser from 'expo-web-browser';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Location from 'expo-location';
+
 
 const Connect = () => {
-
-
     const[pageurl,setPage]=useState(false)
     const[ssid,setSSID] = useState()
     const[pass,setPASS] = useState()
@@ -30,6 +30,48 @@ const Connect = () => {
       })
       return unsubscribe;
   },[])
+
+// gpt code
+useEffect(() => {
+  const requestPermissions = async () => {
+    // Android runtime permission
+    if (Platform.OS === 'android') {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: "Xvera Home Location Permission",
+          message: "Location permission is required to send Wi-Fi credentials",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK"
+        }
+      );
+      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+        alert("Location permission is required for Wi-Fi HTTP");
+        return false;
+      }
+    }
+
+    // Expo Location permission
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      alert("Location permission required!");
+      return false;
+    }
+    return true;
+  };
+
+  requestPermissions();
+}, []);
+
+useEffect(() => {
+  const subscription = AppState.addEventListener('change', state => {
+    if (state === 'active') {
+      // reconnect MQTT or HTTP safely
+    }
+  });
+  return () => subscription.remove();
+}, []); //gpt code 
 
     const SendData = () =>{
         fetch('http://192.168.4.1/wifi',{
@@ -49,6 +91,13 @@ const Connect = () => {
             console.error("Error:", error);
             });
         }
+
+AppState.addEventListener('change', state => {
+  if (state === 'active') {
+    // reconnect MQTT + HTTP
+  }
+});
+
 
   return (
 
@@ -145,7 +194,7 @@ const styles = StyleSheet.create({
         backgroundColor:'#0B0F14'
     },
     mainSet:{
-        marginTop:ScreenHeight*0.05
+        marginTop:ScreenHeight*0.01
     },
     mainSetTxt_1:{
         color:'white',

@@ -1,33 +1,67 @@
 {
   "expo": {
-    "name": "XveraHome",
-    "slug": "XveraHome",
-    "version": "1.0.0",
+    "name": "Xvera Home",
+    "slug": "xvera-home",
+    "version": "1.0.6",
     "orientation": "portrait",
-    "icon": "./assets/icon1.png",
+    "icon": "./assets/app-icon3.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/icon1.png",
+      "image": "./assets/app-icon3.png",
       "resizeMode": "contain",
-      "backgroundColor": "black"
+      "backgroundColor": "#000000"
+    },
+    "updates": {
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/d8feb2d8-7155-4e2b-ac89-c77a43871342"
+    },
+    "android": {
+      "package": "com.xvera.home",
+      "versionCode": 6,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/app-icon3.png"
+      },
+      "edgeToEdgeEnabled": true,
+      "usesCleartextTraffic": true,
+      "networkSecurityConfig": {
+        "baseConfig": {
+          "cleartextTrafficPermitted": true
+        },
+        "domainConfig": [
+          {
+            "domain": "192.168.4.1",
+            "includeSubdomains": true,
+            "cleartextTrafficPermitted": true
+          },
+          {
+            "domain": "192.168.4.1",
+            "includeSubdomains": true,
+            "cleartextTrafficPermitted": true
+          }
+        ]
+      }
     },
     "ios": {
       "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/icon1.png",
-        "backgroundColor": "black"
-      },
-      "edgeToEdgeEnabled": true
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
+      "./plugins/androidNetworkSecurityConfig",
       "expo-web-browser",
       "@react-native-community/datetimepicker"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "d8feb2d8-7155-4e2b-ac89-c77a43871342"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    }
   }
 }

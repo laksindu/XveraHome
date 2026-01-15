@@ -9,6 +9,7 @@ import { Avatar, Caption, Icon, Title, TouchableRipple } from 'react-native-pape
 import PromptModal from '../components/PromptModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
 const ScreenHeight = Dimensions.get('window').height
 const ScreenWidth = Dimensions.get('window').width
 
@@ -55,16 +56,6 @@ const handleAddName = (name) => {
       </View>
 
       <View style={styles.test}>
-        <TouchableOpacity style={styles.testbtn}
-        onPress={Setup_navigation}
-        >
-            <Avatar.Image
-            source={require('../assets/setup.png')}
-            size={45}
-            backgroundColor = "#000b20"
-            />
-            <Text style={styles.testbtntxt}>How to setup</Text>
-        </TouchableOpacity>
                 <TouchableOpacity style={styles.testbtn}>
             <Avatar.Image
             source={require('../assets/info.png')}
@@ -106,7 +97,7 @@ const handleAddName = (name) => {
       </View>
       
       <View style = {styles.footer}>
-        <Text style={styles.footertxt}>Xvera Home</Text>
+        <Text style={styles.footertxt}>Xvera Home 1.0.6</Text>
       </View>
 
        <FlatList
