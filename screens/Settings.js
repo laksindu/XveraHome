@@ -49,8 +49,8 @@ const handleAddName = (name) => {
             <Title style={[styles.title, {
               marginTop:15,
               marginBottom: 5,
-            }]}>Your ID</Title>
-            <Text selectable={true}  style={styles.caption}>{auth.currentUser ?.uid}</Text>
+            }]}>Hey there !</Title>
+            <Text style={styles.caption}>Profile & account</Text>
           </View>
         </View>
       </View>
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 20,
     fontWeight: '500',
-    textDecorationLine:'underline',
+    //textDecorationLine:'underline',
     color:'#ebe6e6ff'
   },
   test: {
