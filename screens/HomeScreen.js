@@ -140,6 +140,8 @@ const HomeScreen = ()=> {
         Mqtt()
     })
 
+    const[IsDevice,setDevice] = useState()
+
 useEffect(()=>{
         const data = ()=>{
             client.on('message',(topic,message)=>{
@@ -147,12 +149,14 @@ useEffect(()=>{
                     if(message == "online"){
                         console.log("Device is online")
                         setPage(true)
+                        setDevice(true)
                         setRefreshing(false)
                     }
                     else if(message == "offline"){
                         console.log("Device is offline")
                         setPage(false)
                         setRefreshing(false)
+                        setDevice(false)
                     }
                 }
             })
@@ -167,7 +171,7 @@ useEffect(()=>{
     setRefreshing(true)
 
     setTimeout(()=>{
-        setRefreshing(true)
+        setRefreshing(false)
         setPage(false)
     },3000)
 
@@ -199,6 +203,61 @@ const ConnectNav = ()=>{
     navigation.navigate('Connect')
 }
 
+/*
+const[LocalSwitch, setLocalSwitch] = useState('')
+
+const LocalControl = ()=>{
+    fetch('http://192.168.4.1/wifi',{
+        method: 'POST',
+        headers:{
+            "Content-Type": "application/x-www-form-urlencoded"               
+        },
+        body:`${LocalSwitch}`
+    })
+}*/
+
+const[deviceState,SetDeivceState] = useState(true)
+
+useEffect(()=>{
+    const getDevice  = async()=>{
+        const device = await AsyncStorage.getItem("DeviceConnected")
+        if(device == true){
+            SetDeivceState(true)
+        }
+    }
+    getDevice()
+})
+
+const OfflineControl = ()=>{
+    setPage(true)
+    s1SetVisibal(true)
+    s2SetVisibal(true)
+    s3SetVisibal(true)
+    s4SetVisibal(true)
+}
+
+//this dosen't need becasue if mobile turn on data and suscribe the topic and get online or offline status then update the setpage() and show home screen or offline screen 
+useEffect(()=>{
+    setInterval(() => {
+        const fetchDevice = ()=>{
+            fetch("http://192.168.4.1/wifi",{
+                method:'GET',
+                headers:{
+                    "Content-Type": "application/x-www-form-urlencoded"               
+                }
+            })
+            .then(response => response.text())
+            .then(data =>{
+                if(data == "Alive"){
+                    setPage(true)// if device is alive this will set page state to true and show the home screen with devices control
+                    //alert(data)
+                }
+            })
+        }
+        fetchDevice()
+    },5000);
+
+},[])
   return (
     <>
     <StatusBar hidden = {false}/>
@@ -227,7 +286,10 @@ const ConnectNav = ()=>{
         </View>
         <Text style={{marginLeft:25 , marginTop:10 , fontSize:18 , color:'white'}}> Hey Welcome</Text>
 
-        <Text style={{color:'white',marginTop:55,marginLeft:ScreenWidth*0.07,fontWeight:'bold'}}>My Devices</Text>
+        <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+            <Text style={{color:'white',marginTop:55,marginLeft:ScreenWidth*0.07,fontWeight:'bold'}}>My Devices</Text>
+        </View>
+
 
         <View style={styles.upswitches}>
             <View style={[styles.switch1,{backgroundColor:switch1? '#133665':'#646d80'}]}
@@ -252,15 +314,39 @@ const ConnectNav = ()=>{
                 toggle = {switch1}
                 setToggle={(value)=>{
                     if(value == true){
-                        //console.log('checked ' + value)
-                        client.publish(`iot/${UserId}/to_device`,'R1_ON')
-                        s1SetRefresh(true)//set switch refresh true with publishing message and show the switch refresh ( until get mqtt subscribe message then this will false and sswitch refresh is stop then if user click publish message again this will true and switch refresh animation is start  )
-                        s1SetVisibal(false)// set switch Visibal to false to show switch refreshing after click toggel ( until get mqtt subscribe message then this will true and show the toggel button to click next state (on/off) then if user click publish message again this will false and toggel button display will none to show switch refereshing)
+                        if(IsDevice == true){
+                            client.publish(`iot/${UserId}/to_device`,'R1_ON')
+                            s1SetRefresh(true)//set switch refresh true with publishing message and show the switch refresh ( until get mqtt subscribe message then this will false and sswitch refresh is stop then if user click publish message again this will true and switch refresh animation is start  )
+                            s1SetVisibal(false)// set switch Visibal to false to show switch refreshing after click toggel ( until get mqtt subscribe message then this will true and show the toggel button to click next state (on/off) then if user click publish message again this will false and toggel button display will none to show switch refereshing)
+                        }else{
+                            fetch("http://192.168.4.1/wifi",{
+                                method: 'POST',
+                                headers:{
+                                    "Content-Type": "application/x-www-form-urlencoded"               
+                                },
+                                body:"Switch_1=ON"
+                            })
+                            setSwitch1(true)
+                        }
+ 
+
                     }
                     else if(value == false){
-                        client.publish(`iot/${UserId}/to_device`,'R1_OFF')
-                        s1SetRefresh(true)
-                        s1SetVisibal(false)
+                        if(IsDevice == true){
+                            client.publish(`iot/${UserId}/to_device`,'R1_OFF')
+                            s1SetRefresh(true)
+                            s1SetVisibal(false)                          
+                        }
+                        else{
+                            fetch("http://192.168.4.1/wifi",{
+                                method: 'POST',
+                                headers:{
+                                    "Content-Type": "application/x-www-form-urlencoded"               
+                                },
+                                body:"Switch_1=OFF"
+                            })
+                            setSwitch1(false)
+                        }
                     }
                 }}
                 />
@@ -292,15 +378,41 @@ const ConnectNav = ()=>{
                 setToggle={(value2)=>{
                     //setSwitch2(value2)
                     if(value2 == true){
+                        if(IsDevice == true){
+                            client.publish(`iot/${UserId}/to_device`,'R2_ON')
+                            s2SetRefresh(true)
+                            s2SetVisibal(false)
+                        }
+                        else{
+                            fetch("http://192.168.4.1/wifi",{
+                                method: 'POST',
+                                headers:{
+                                    "Content-Type": "application/x-www-form-urlencoded"               
+                                },
+                                body:"Switch_2=ON"
+                            })
+                            setSwitch2(true)
+                        }
                         //console.log('checked ' + value2)
-                        client.publish(`iot/${UserId}/to_device`,'R2_ON')
-                        s2SetRefresh(true)
-                        s2SetVisibal(false)
+
                     }
                     else if(value2 == false){
-                        client.publish(`iot/${UserId}/to_device`,'R2_OFF')
-                        s2SetRefresh(true)
-                        s2SetVisibal(false)
+                        if(IsDevice == true){
+                            client.publish(`iot/${UserId}/to_device`,'R2_OFF')
+                            s2SetRefresh(true)
+                            s2SetVisibal(false)
+                        }
+                        else{
+                            fetch("http://192.168.4.1/wifi",{
+                                method: 'POST',
+                                headers:{
+                                    "Content-Type": "application/x-www-form-urlencoded"               
+                                },
+                                body:"Switch_2=OFF"
+                            })
+                            setSwitch2(false)
+                        }
+
                     }
                 }}
                 />
@@ -332,14 +444,40 @@ const ConnectNav = ()=>{
                     //setSwitch3(value3)
                     if(value3 == true){
                         //console.log('checked ' + value3)
-                        client.publish(`iot/${UserId}/to_device`,'R3_ON')
-                        s3SetRefresh(true)
-                        s3SetVisibal(false)
+                        if(IsDevice == true){
+                            client.publish(`iot/${UserId}/to_device`,'R3_ON')
+                            s3SetRefresh(true)
+                            s3SetVisibal(false)
+                        }
+                        else{
+                            fetch("http://192.168.4.1/wifi",{
+                                method: 'POST',
+                                headers:{
+                                    "Content-Type": "application/x-www-form-urlencoded"               
+                                },
+                                body:"Switch_3=ON"
+                            })
+                            setSwitch3(true)
+                        }
+
                     }
                     else if(value3 == false){
-                        client.publish(`iot/${UserId}/to_device`,'R3_OFF')
-                        s3SetRefresh(true)
-                        s3SetVisibal(false)
+                        if(IsDevice == true){
+                            client.publish(`iot/${UserId}/to_device`,'R3_OFF')
+                            s3SetRefresh(true)
+                            s3SetVisibal(false)
+                        }
+                        else{
+                            fetch("http://192.168.4.1/wifi",{
+                                method: 'POST',
+                                headers:{
+                                    "Content-Type": "application/x-www-form-urlencoded"               
+                                },
+                                body:"Switch_3=OFF"
+                            })
+                            setSwitch3(false)
+                        }
+
                     }
                 }}
                 />
@@ -368,15 +506,38 @@ const ConnectNav = ()=>{
                 setToggle={(value4)=>{
                     //setSwitch4(value4)
                     if(value4 == true){
-                        //console.log('checked ' + value4)
-                        client.publish(`iot/${UserId}/to_device`,'R4_ON')
-                        s4SetRefresh(true)
-                        s4SetVisibal(false)
+                        if(IsDevice == true){
+                            //console.log('checked ' + value4)
+                            client.publish(`iot/${UserId}/to_device`,'R4_ON')
+                            s4SetRefresh(true)
+                            s4SetVisibal(false)
+                        }
+                        else{
+                            fetch("http://192.168.4.1/wifi",{
+                                method: 'POST',
+                                headers:{
+                                    "Content-Type": "application/x-www-form-urlencoded"               
+                                },
+                                body:"Switch_4=ON"
+                            })
+                            setSwitch4(true)                        }
                     }
                     else if(value4 == false ){
-                        client.publish(`iot/${UserId}/to_device`,'R4_OFF')
-                        s4SetRefresh(true)
-                        s4SetVisibal(false)
+                        if(IsDevice == true){
+                            client.publish(`iot/${UserId}/to_device`,'R4_OFF')
+                            s4SetRefresh(true)
+                            s4SetVisibal(false)
+                        }
+                        else{
+                            fetch("http://192.168.4.1/wifi",{
+                                method: 'POST',
+                                headers:{
+                                    "Content-Type": "application/x-www-form-urlencoded"               
+                                },
+                                body:"Switch_4=OFF"
+                            })
+                            setSwitch4(false)
+                        }
                     }
                 }}
                 />
@@ -385,7 +546,15 @@ const ConnectNav = ()=>{
             </View>
 
         </View>
+
+
     </View>)}
+    {pageurl == true && IsDevice == false &&(
+            <View style={styles.offlineState}>
+            <MaterialCommunityIcons name="cloud-off-outline" size={25} color="#415f91" style={{alignSelf:'center'}}/>
+            <Text style={{marginRight:ScreenWidth*0.05,color:'#415f91',fontWeight:'bold'}}>{IsDevice?"":"You’re in Local Mode"}</Text>
+        </View>
+    )}
 
        {pageurl == false &&(
          <View style={styles.offlineContainer}>
@@ -406,6 +575,16 @@ const ConnectNav = ()=>{
             <Text style={styles.addtxt}>Add Device</Text>
             </TouchableOpacity>
         </View>)}
+
+        {pageurl == false && deviceState == true &&(
+            <TouchableOpacity style ={styles.offlineContainer_1}
+            onPress={OfflineControl}
+            >
+                <Text style={[styles.disDevcietxt_1,{color:'#415f91'}]}>Works without internet</Text>
+                    <MaterialCommunityIcons name="cloud-off-outline" size={25} color="#415f91" style={{alignSelf:'center'}}/>
+
+            </TouchableOpacity>
+        )}
         
 
     </ScrollView>
@@ -579,6 +758,36 @@ const styles = StyleSheet.create({
     indicator:{
         marginRight:100,
         marginTop:30
+    },
+    offlineContainer_1:{
+        flexDirection:'row',
+        justifyContent:'space-between',
+        alignSelf:'center',
+        marginTop:ScreenHeight*0.03,
+        backgroundColor:'#d6e3ff',
+        width:ScreenWidth*0.81,
+        height:40,
+        borderRadius:20,
+        paddingHorizontal:15
+    },
+    disDevcietxt_1:{
+        fontSize:16,
+        alignSelf:"center",
+        color:'white',
+        marginLeft:8,
+        fontWeight:'bold'
+    },
+    offlineState:{
+        flexDirection:'row',
+        justifyContent:'space-between',
+        alignSelf:'center',
+        marginTop:ScreenHeight*0.15,
+        backgroundColor:'#d6e3ff',
+        width:ScreenWidth*0.6,
+        height:40,
+        borderRadius:20,
+        paddingHorizontal:15,
+        alignItems:'center'
     }
 })
 

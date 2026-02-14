@@ -21,6 +21,7 @@ const Connect = () => {
     const[ssid,setSSID] = useState()
     const[pass,setPASS] = useState()
     const[UserId,setUserId] = useState()
+    const[Device,setDeviceId] = useState(false)
 
   useEffect(()=>{
       const unsubscribe = onAuthStateChanged(auth , (user) =>{
@@ -85,12 +86,25 @@ useEffect(() => {
             .then(data => {
             if (data === "OK") {
                 alert("WiFi credentials sent successfully");
+                setDeviceId(true)
+                
             }
             })
             .catch(error => {
             console.error("Error:", error);
             });
         }
+
+
+useEffect(()=>{
+    const CheckDevice = async()=>{
+        if(Device == true){
+            await AsyncStorage.setItem('DeviceConnected','true');
+            
+        }
+    }
+    CheckDevice();
+})
 
 AppState.addEventListener('change', state => {
   if (state === 'active') {
